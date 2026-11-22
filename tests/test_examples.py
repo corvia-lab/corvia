@@ -98,3 +98,15 @@ def test_conflicting_deltas(smart_home):
         for i in smart_home["items"]
         for name in (i.get("attributes") or {})
     )
+
+
+def test_enterprise_is_valid():
+    assert validate_folder(EXAMPLES / "enterprise") == []
+
+
+def test_enterprise_chain_exists():
+    items = load_folder(EXAMPLES / "enterprise")["items"]
+    supported = {(players(r, "process")[0], players(r, "application")[0]) for r in rels(items, "supported_by")}
+    runs = {players(r, "application")[0]: players(r, "server")[0] for r in rels(items, "runs_on")}
+    located = {players(r, "server")[0]: players(r, "datacenter")[0] for r in rels(items, "located_in")}
+    assert any(app in runs and runs[app] in located for _, app in supported)

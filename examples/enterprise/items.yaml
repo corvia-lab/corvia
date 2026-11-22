@@ -1,0 +1,37 @@
+# Invented example data: a rough control case for the meta-model.
+items:
+  - { id: proc-order, type: business_process, attributes: { name: Order to cash, owner: Sales } }
+  - { id: proc-hire, type: business_process, attributes: { name: Hire to retire, owner: HR } }
+
+  - id: app-shop
+    type: application
+    binding: { connector: ea-tool, id: APP-001 }
+    attributes:
+      name: { value: Web shop, binding: { connector: ea-tool } }
+      lifecycle: { value: active, binding: { connector: ea-tool } }
+  - id: app-erp
+    type: application
+    binding: { connector: ea-tool, id: APP-002 }
+    attributes:
+      name: { value: ERP, binding: { connector: ea-tool } }
+      lifecycle: { value: active, binding: { connector: ea-tool } }
+  # Messy case: an application without a server.
+  - id: app-hr
+    type: application
+    binding: { connector: ea-tool, id: APP-003 }
+    attributes:
+      name: { value: HR portal (SaaS), binding: { connector: ea-tool } }
+      lifecycle: { value: active, binding: { connector: ea-tool } }
+
+  - { id: srv-web, type: server, attributes: { name: Web server 1, os: Linux } }
+  - { id: srv-db, type: server, attributes: { name: Database server 1, os: Linux } }
+  - { id: dc-1, type: datacenter, attributes: { name: Datacenter North } }
+
+  - { id: sup-order-shop, type: supported_by, attributes: { criticality: high }, roles: { process: [proc-order], application: [app-shop] } }
+  - { id: sup-order-erp, type: supported_by, attributes: { criticality: high }, roles: { process: [proc-order], application: [app-erp] } }
+  - { id: sup-hire-hr, type: supported_by, attributes: { criticality: medium }, roles: { process: [proc-hire], application: [app-hr] } }
+  - { id: sup-hire-erp, type: supported_by, attributes: { criticality: low }, roles: { process: [proc-hire], application: [app-erp] } }
+  - { id: run-shop, type: runs_on, roles: { application: [app-shop], server: [srv-web] } }
+  - { id: run-erp-db, type: runs_on, roles: { application: [app-erp], server: [srv-db] } }
+  - { id: in-web, type: located_in, roles: { server: [srv-web], datacenter: [dc-1] } }
+  - { id: in-db, type: located_in, roles: { server: [srv-db], datacenter: [dc-1] } }
