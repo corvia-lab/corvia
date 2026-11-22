@@ -2,6 +2,8 @@
 // no type names may appear in this file (checked in tasks.md, step 8.2).
 import { indexBundle, title, relationsOf, otherPlayers, isEdgeType, drillDown, buildTree } from "./lib/model.js";
 import { createState, editAttribute, receiveSourceChange, markDeleted, listPending, applySync } from "./lib/deltas.js";
+import { listColumns, cellText, filterRows, sortRows } from "./lib/table.js";
+import { renderMarkdown } from "./lib/markdown.js";
 
 const $ = (id) => document.getElementById(id);
 const el = (tag, attrs = {}, ...children) => {
@@ -16,7 +18,9 @@ const el = (tag, attrs = {}, ...children) => {
   return node;
 };
 
-const app = { bundles: {}, bundle: null, state: null, index: null, viewId: null, selected: null, lastCalls: [] };
+const app = { bundles: {}, bundle: null, state: null, index: null, viewId: null, selected: null, lastCalls: [], lists: {} };
+
+const markdown = (text) => { const div = el("div", { class: "markdown" }); div.innerHTML = renderMarkdown(text); return div; };
 
 const typeInfo = (type) => app.bundle.presentation?.types?.[type] ?? {};
 const typeLabel = (type) => typeInfo(type).label ?? type;
@@ -52,17 +56,76 @@ function renderView() {
   const view = app.bundle.presentation.views.find((v) => v.id === app.viewId);
   const target = $("view");
   target.replaceChildren(el("h3", {}, view.label));
-  if (view.kind === "tree") {
-    target.append(renderTreeNodes(buildTree(app.index, view)));
-  } else {
-    const items = [...(app.index.byType.get(view.type) ?? [])].sort((a, b) => title(app.index, a).localeCompare(title(app.index, b)));
-    target.append(el("p", { class: "muted" }, `${items.length} items`), el("ul", { class: "tree" }, items.map((i) => el("li", {}, nodeLink(i)))));
+  if (view.kind === "tree") target.append(renderTreeNodes(buildTree(app.index, view)));
+  else renderList(target, view);
+}
+
+// ---- list view: search, sort, filter, choose columns, edit in place ----------
+
+function listState(view) {
+  const key = `${app.bundle.model.model}/${view.id}`;
+  if (!app.lists[key]) {
+    const columns = listColumns(app.index, view.type);
+    app.lists[key] = { visible: new Set(columns.map((c) => c.id)), sort: null, search: "", filters: {} };
   }
+  return app.lists[key];
+}
+
+function renderList(target, view) {
+  const ls = listState(view);
+  const columns = listColumns(app.index, view.type);
+  const tableBox = el("div", { class: "table-box" });
+  const draw = () => tableBox.replaceChildren(listTable(view, ls, columns, draw));
+  const search = el("input", { type: "search", placeholder: "Search", value: ls.search, oninput: (e) => { ls.search = e.target.value; draw(); } });
+  const chooser = el("details", { class: "columns" }, el("summary", {}, "Columns"),
+    columns.map((c) => el("label", {}, el("input", { type: "checkbox", checked: ls.visible.has(c.id), onchange: (e) => {
+      if (e.target.checked) ls.visible.add(c.id); else ls.visible.delete(c.id);
+      draw();
+    } }), ` ${c.kind === "relationship" ? "↔ " : ""}${c.label}`)));
+  target.append(el("div", { class: "toolbar" }, search, chooser), tableBox);
+  draw();
+}
+
+function listTable(view, ls, columns, redraw) {
+  const visible = columns.filter((c) => ls.visible.has(c.id));
+  let items = filterRows(app.index, app.index.byType.get(view.type) ?? [], visible, ls);
+  const sortCol = ls.sort && visible.find((c) => c.id === ls.sort.id);
+  items = sortCol ? sortRows(app.index, items, sortCol, ls.sort.dir) : [...items].sort((a, b) => title(app.index, a).localeCompare(title(app.index, b)));
+
+  const sortButton = (c) => {
+    const dir = ls.sort?.id === c.id ? ls.sort.dir : null;
+    return el("button", { class: "sort", onclick: () => {
+      ls.sort = { id: c.id, dir: dir === "asc" ? "desc" : "asc" };
+      redraw();
+    } }, `${c.kind === "relationship" ? "↔ " : ""}${c.label}${dir === "asc" ? " ▲" : dir === "desc" ? " ▼" : ""}`);
+  };
+  const filterInput = (c) => el("input", { type: "text", class: "filter", placeholder: "filter", value: ls.filters[c.id] ?? "",
+    onchange: (e) => { ls.filters[c.id] = e.target.value; redraw(); } });
+
+  const head = el("thead", {},
+    el("tr", {}, el("th", {}, "Item"), visible.map((c) => el("th", {}, sortButton(c)))),
+    el("tr", {}, el("th", {}), visible.map((c) => el("th", {}, filterInput(c)))));
+  const body = el("tbody", {}, items.map((item) => el("tr", {},
+    el("td", {}, nodeLink(item)),
+    visible.map((c) => el("td", {}, c.kind === "relationship" ? cellText(app.index, item, c) : attributeCell(item, c))))));
+  return el("div", {}, el("p", { class: "muted" }, `${items.length} of ${(app.index.byType.get(view.type) ?? []).length} items`), el("table", { class: "list" }, head, body));
+}
+
+function attributeCell(item, column) {
+  const a = item.attributes?.[column.attribute] ?? { value: null };
+  const input = valueInput(column.spec, a.value, true);
+  input.addEventListener("change", () => { editAttribute(app.state, item.id, column.attribute, readInput(column.spec, input)); rerender(); });
+  const marks = [];
+  if (a.binding) marks.push(el("span", { class: "badge bound", title: `bound to ${a.binding.connector}` }, "🔗"));
+  if (a.pending?.to_source) marks.push(el("span", { class: `badge ${a.pending.to_source.status}`, title: a.pending.to_source.status }, `→ ${a.pending.to_source.value}`));
+  if (a.pending?.from_source) marks.push(el("span", { class: `badge ${a.pending.from_source.status}`, title: "from source" }, `← ${a.pending.from_source.value}`));
+  return el("div", { class: "cell" }, input, marks);
 }
 
 // ---- detail ------------------------------------------------------------------
 
-function valueInput(spec, value) {
+function valueInput(spec, value, compact = false) {
+  if (spec?.type === "text") return el("textarea", { rows: compact ? 2 : 6, placeholder: "Markdown" }, value ?? "");
   if (spec?.type === "enum") {
     return el("select", {}, el("option", { value: "" }, "–"), spec.values.map((v) => el("option", { value: v, selected: v === value }, v)));
   }
@@ -97,7 +160,10 @@ function attributeRows(item) {
       const incoming = valueInput(spec, a.value);
       actions.append(incoming, el("button", { onclick: () => { receiveSourceChange(app.state, item.id, name, readInput(spec, incoming)); rerender(); } }, "Simulate source change"));
     }
-    return el("tr", {}, el("th", {}, name), el("td", {}, a.value === null || a.value === undefined ? el("span", { class: "muted" }, "–") : String(a.value), badges, actions));
+    const shown = a.value === null || a.value === undefined || a.value === ""
+      ? el("span", { class: "muted" }, "–")
+      : spec?.type === "text" ? markdown(a.value) : String(a.value);
+    return el("tr", {}, el("th", {}, name), el("td", {}, shown, badges, actions));
   });
 }
 

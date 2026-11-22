@@ -49,6 +49,8 @@ Observed while building the example models (Tasks 3 and 4):
 | Views: `tree` with `levels` and `group_by`, `list` | yes | The smart home overview needs two hops plus grouping by device class. |
 | Preferred graph view | not built | Not needed for the use case so far. Open. |
 
+**From the maintainer's first review (fact):** list views need to work as tables: search, sort, filter, choose columns, edit in place, and one column per relationship type. Text attributes need multi-line Markdown. Both were added to the prototype. **Assumption:** column choice and filters are personal view state, not part of the presentation layer; the presentation layer only provides the default order.
+
 **Found while using it (fact):** tree levels follow a relationship without filtering by type. In the overview, "Remote access" (an external service that connects *to* instance 1) appears under instance 1 in the "(none)" group, next to devices. A level needs an optional **type filter**. Not fixed in the prototype, so the effect stays visible.
 
 ## Editing and synchronization

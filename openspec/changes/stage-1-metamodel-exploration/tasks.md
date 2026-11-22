@@ -270,3 +270,23 @@ views:
 - [x] 10.1 Fill every heading except the decision. Separate facts, assumptions and opinions.
 - [ ] 10.2 Ask quasipapa to evaluate the prototype (Task 8.2 checklist as a starting point) and to write the decision.
 - [x] 10.3 Commit: `Add stage 1 findings draft`.
+
+## 11. Maintainer feedback on the prototype (2026-11-22)
+
+Requested by quasipapa after reviewing PR #1.
+
+**Files:**
+- Create: `prototypes/lib/table.js`, `prototypes/lib/markdown.js`
+- Modify: `prototypes/app.js`, `prototypes/style.css`, `prototypes/README.md`
+- Test: `prototypes/tests/table.test.mjs`, `prototypes/tests/markdown.test.mjs`
+
+**Interfaces:**
+- `listColumns(index, typeName) -> Column[]`: attributes in `attribute_order`, then one column per relationship type in which the type can play a role. `Column = { id: "attr:<name>" | "rel:<type>", kind, label, attribute?, spec?, relType? }`
+- `cellText(index, item, column) -> string`: binary relationships as `→ other (edge label)` or `← other`, n-ary as `as <role>; <role>: players`
+- `filterRows(index, items, visibleColumns, { search, filters }) -> Item[]` (case-insensitive; column filters combine with AND; search covers title and visible columns)
+- `sortRows(index, items, column, "asc" | "desc") -> Item[]` (empty values last in both directions)
+- `renderMarkdown(text) -> string` (safe subset, HTML escaped, only http(s) links)
+
+- [x] 11.1 Text attributes (e.g. `notes`) are edited in a multi-line field and shown as Markdown.
+- [x] 11.2 List views become tables: search, sort by column, filter per column, choose visible columns, edit attributes in place (bound attributes create pending changes), one column per relationship type.
+- [x] 11.3 Tests: `node --test 'prototypes/tests/*.test.mjs'` → 38 pass. Checked in a browser (automated): search, filter, sort, hide column, edit in place, Markdown rendering, no console errors.
