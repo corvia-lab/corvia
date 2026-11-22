@@ -290,3 +290,15 @@ Requested by quasipapa after reviewing PR #1.
 - [x] 11.1 Text attributes (e.g. `notes`) are edited in a multi-line field and shown as Markdown.
 - [x] 11.2 List views become tables: search, sort by column, filter per column, choose visible columns, edit attributes in place (bound attributes create pending changes), one column per relationship type.
 - [x] 11.3 Tests: `node --test 'prototypes/tests/*.test.mjs'` → 38 pass. Checked in a browser (automated): search, filter, sort, hide column, edit in place, Markdown rendering, no console errors.
+
+## 12. Business letter example (design D9, 2026-11-22)
+
+**Files:**
+- Create: `examples/business-letter/{model,items,presentation}.yaml`, `examples/business-letter/README.md`, `prototypes/data/business-letter.json` (generated)
+- Modify: `spec/metamodel/presentation.schema.json` and `spec/metamodel/README.md` (`repeat` on tree levels), `prototypes/lib/model.js` (`buildTree` repeat, derived titles for unnamed relationships)
+- Test: `tests/test_examples.py`, `tests/test_structure.py`, `prototypes/tests/model.test.mjs`
+
+- [x] 12.1 Tests first: example valid; conditions attached to "contains" relationships and reused; parts nested at least two levels; partner structure type with ordered scalar fields; letter groups and letters both consume data items and groups; tree level may repeat; repeating tree reaches the deepest part; unnamed relationships get titles from their players.
+- [x] 12.2 Model, data and presentation as in D9.
+- [x] 12.3 `python tools/build_bundles.py`; pytest → 47 passed; node → 40 pass; browser check: tree, condition on relationship, conditions list, no console errors.
+- [x] 12.4 Findings updated, including the UI fine-tuning the maintainer deferred.

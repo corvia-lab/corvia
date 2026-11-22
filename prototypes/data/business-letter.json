@@ -1,0 +1,2066 @@
+{
+  "model": {
+    "model": "business-letter",
+    "connectors": [],
+    "types": {
+      "business_function": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          }
+        }
+      },
+      "business_letter_group": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          }
+        }
+      },
+      "business_letter": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          },
+          "description": {
+            "type": "text"
+          }
+        }
+      },
+      "document": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          }
+        }
+      },
+      "document_part": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          }
+        }
+      },
+      "condition": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          },
+          "description": {
+            "type": "text"
+          },
+          "expression": {
+            "type": "string"
+          }
+        }
+      },
+      "data_item_group": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          }
+        }
+      },
+      "data_item": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          },
+          "data_type": {
+            "type": "enum",
+            "values": [
+              "string",
+              "number",
+              "date",
+              "boolean",
+              "enum"
+            ]
+          }
+        }
+      },
+      "data_structure": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          }
+        }
+      },
+      "data_structure_type": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          }
+        }
+      },
+      "data_structure_field": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          },
+          "data_type": {
+            "type": "enum",
+            "values": [
+              "string",
+              "number",
+              "date",
+              "boolean",
+              "enum"
+            ],
+            "required": true
+          },
+          "allowed_values": {
+            "type": "string"
+          }
+        }
+      },
+      "datasource": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          }
+        }
+      },
+      "supports": {
+        "kind": "relationship",
+        "roles": {
+          "function": {
+            "types": [
+              "business_function"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          },
+          "letter": {
+            "types": [
+              "business_letter"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          }
+        },
+        "unique": true
+      },
+      "member_of": {
+        "kind": "relationship",
+        "roles": {
+          "letter": {
+            "types": [
+              "business_letter"
+            ],
+            "count": "1",
+            "per_item": "1"
+          },
+          "group": {
+            "types": [
+              "business_letter_group"
+            ],
+            "count": "1",
+            "per_item": "1..n"
+          }
+        }
+      },
+      "contains_document": {
+        "kind": "relationship",
+        "roles": {
+          "letter": {
+            "types": [
+              "business_letter"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          },
+          "document": {
+            "types": [
+              "document"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          }
+        },
+        "unique": true
+      },
+      "contains_part": {
+        "kind": "relationship",
+        "roles": {
+          "document": {
+            "types": [
+              "document"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          },
+          "part": {
+            "types": [
+              "document_part"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          }
+        },
+        "unique": true
+      },
+      "contains_subpart": {
+        "kind": "relationship",
+        "roles": {
+          "parent": {
+            "types": [
+              "document_part"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          },
+          "child": {
+            "types": [
+              "document_part"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          }
+        },
+        "unique": true
+      },
+      "appears_when": {
+        "kind": "relationship",
+        "roles": {
+          "target": {
+            "types": [
+              "contains_document",
+              "contains_part",
+              "contains_subpart"
+            ],
+            "count": "1",
+            "per_item": "0..1"
+          },
+          "condition": {
+            "types": [
+              "condition"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          }
+        }
+      },
+      "in_group": {
+        "kind": "relationship",
+        "roles": {
+          "item": {
+            "types": [
+              "data_item"
+            ],
+            "count": "1",
+            "per_item": "1"
+          },
+          "group": {
+            "types": [
+              "data_item_group"
+            ],
+            "count": "1",
+            "per_item": "1..n"
+          }
+        }
+      },
+      "needs_data": {
+        "kind": "relationship",
+        "roles": {
+          "consumer": {
+            "types": [
+              "business_letter_group",
+              "business_letter"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          },
+          "data": {
+            "types": [
+              "data_item_group",
+              "data_item"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          }
+        },
+        "unique": true
+      },
+      "uses_structure": {
+        "kind": "relationship",
+        "roles": {
+          "consumer": {
+            "types": [
+              "business_letter_group",
+              "business_letter"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          },
+          "structure": {
+            "types": [
+              "data_structure"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          }
+        },
+        "unique": true
+      },
+      "typed_as": {
+        "kind": "relationship",
+        "roles": {
+          "structure": {
+            "types": [
+              "data_structure"
+            ],
+            "count": "1",
+            "per_item": "1"
+          },
+          "type": {
+            "types": [
+              "data_structure_type"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          }
+        }
+      },
+      "has_fields": {
+        "kind": "relationship",
+        "roles": {
+          "type": {
+            "types": [
+              "data_structure_type"
+            ],
+            "count": "1",
+            "per_item": "0..1"
+          },
+          "fields": {
+            "types": [
+              "data_structure_field"
+            ],
+            "count": "1..n",
+            "per_item": "1",
+            "ordered": true
+          }
+        }
+      },
+      "provided_by": {
+        "kind": "relationship",
+        "roles": {
+          "data": {
+            "types": [
+              "data_item",
+              "data_structure"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          },
+          "source": {
+            "types": [
+              "datasource"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          }
+        },
+        "unique": true
+      }
+    }
+  },
+  "items": [
+    {
+      "id": "bf-onboarding",
+      "type": "business_function",
+      "attributes": {
+        "name": {
+          "value": "Customer onboarding"
+        }
+      }
+    },
+    {
+      "id": "bf-contract",
+      "type": "business_function",
+      "attributes": {
+        "name": {
+          "value": "Contract management"
+        }
+      }
+    },
+    {
+      "id": "bf-dunning",
+      "type": "business_function",
+      "attributes": {
+        "name": {
+          "value": "Dunning"
+        }
+      }
+    },
+    {
+      "id": "grp-contract",
+      "type": "business_letter_group",
+      "attributes": {
+        "name": {
+          "value": "Contract letters"
+        }
+      }
+    },
+    {
+      "id": "grp-billing",
+      "type": "business_letter_group",
+      "attributes": {
+        "name": {
+          "value": "Billing letters"
+        }
+      }
+    },
+    {
+      "id": "let-welcome",
+      "type": "business_letter",
+      "attributes": {
+        "name": {
+          "value": "Welcome letter"
+        },
+        "description": {
+          "value": "Sent once after the contract is signed.\n\n- cover letter\n- contract summary\n- terms"
+        }
+      }
+    },
+    {
+      "id": "let-change",
+      "type": "business_letter",
+      "attributes": {
+        "name": {
+          "value": "Contract change confirmation"
+        }
+      }
+    },
+    {
+      "id": "let-cancel",
+      "type": "business_letter",
+      "attributes": {
+        "name": {
+          "value": "Cancellation confirmation"
+        }
+      }
+    },
+    {
+      "id": "let-reminder-1",
+      "type": "business_letter",
+      "attributes": {
+        "name": {
+          "value": "First payment reminder"
+        }
+      }
+    },
+    {
+      "id": "let-reminder-2",
+      "type": "business_letter",
+      "attributes": {
+        "name": {
+          "value": "Second payment reminder"
+        }
+      }
+    },
+    {
+      "id": "sup-welcome",
+      "type": "supports",
+      "roles": {
+        "function": [
+          "bf-onboarding"
+        ],
+        "letter": [
+          "let-welcome"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "sup-welcome-contract",
+      "type": "supports",
+      "roles": {
+        "function": [
+          "bf-contract"
+        ],
+        "letter": [
+          "let-welcome"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "sup-change",
+      "type": "supports",
+      "roles": {
+        "function": [
+          "bf-contract"
+        ],
+        "letter": [
+          "let-change"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "sup-cancel",
+      "type": "supports",
+      "roles": {
+        "function": [
+          "bf-contract"
+        ],
+        "letter": [
+          "let-cancel"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "sup-reminder-1",
+      "type": "supports",
+      "roles": {
+        "function": [
+          "bf-dunning"
+        ],
+        "letter": [
+          "let-reminder-1"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "sup-reminder-2",
+      "type": "supports",
+      "roles": {
+        "function": [
+          "bf-dunning"
+        ],
+        "letter": [
+          "let-reminder-2"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "mem-welcome",
+      "type": "member_of",
+      "roles": {
+        "letter": [
+          "let-welcome"
+        ],
+        "group": [
+          "grp-contract"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "mem-change",
+      "type": "member_of",
+      "roles": {
+        "letter": [
+          "let-change"
+        ],
+        "group": [
+          "grp-contract"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "mem-cancel",
+      "type": "member_of",
+      "roles": {
+        "letter": [
+          "let-cancel"
+        ],
+        "group": [
+          "grp-contract"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "mem-reminder-1",
+      "type": "member_of",
+      "roles": {
+        "letter": [
+          "let-reminder-1"
+        ],
+        "group": [
+          "grp-billing"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "mem-reminder-2",
+      "type": "member_of",
+      "roles": {
+        "letter": [
+          "let-reminder-2"
+        ],
+        "group": [
+          "grp-billing"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "doc-cover",
+      "type": "document",
+      "attributes": {
+        "name": {
+          "value": "Cover letter"
+        }
+      }
+    },
+    {
+      "id": "doc-summary",
+      "type": "document",
+      "attributes": {
+        "name": {
+          "value": "Contract summary"
+        }
+      }
+    },
+    {
+      "id": "doc-terms",
+      "type": "document",
+      "attributes": {
+        "name": {
+          "value": "Terms and conditions"
+        }
+      }
+    },
+    {
+      "id": "doc-invoice",
+      "type": "document",
+      "attributes": {
+        "name": {
+          "value": "Invoice"
+        }
+      }
+    },
+    {
+      "id": "doc-sepa",
+      "type": "document",
+      "attributes": {
+        "name": {
+          "value": "SEPA direct debit mandate"
+        }
+      }
+    },
+    {
+      "id": "part-address",
+      "type": "document_part",
+      "attributes": {
+        "name": {
+          "value": "Address block"
+        }
+      }
+    },
+    {
+      "id": "part-salutation",
+      "type": "document_part",
+      "attributes": {
+        "name": {
+          "value": "Salutation"
+        }
+      }
+    },
+    {
+      "id": "part-signature",
+      "type": "document_part",
+      "attributes": {
+        "name": {
+          "value": "Signature"
+        }
+      }
+    },
+    {
+      "id": "part-tariff-table",
+      "type": "document_part",
+      "attributes": {
+        "name": {
+          "value": "Tariff table"
+        }
+      }
+    },
+    {
+      "id": "part-tariff-row",
+      "type": "document_part",
+      "attributes": {
+        "name": {
+          "value": "Tariff row"
+        }
+      }
+    },
+    {
+      "id": "part-legal-notice",
+      "type": "document_part",
+      "attributes": {
+        "name": {
+          "value": "Legal notice"
+        }
+      }
+    },
+    {
+      "id": "part-privacy-notice",
+      "type": "document_part",
+      "attributes": {
+        "name": {
+          "value": "Privacy notice"
+        }
+      }
+    },
+    {
+      "id": "part-privacy-contact",
+      "type": "document_part",
+      "attributes": {
+        "name": {
+          "value": "Data protection officer contact"
+        }
+      }
+    },
+    {
+      "id": "part-payment-details",
+      "type": "document_part",
+      "attributes": {
+        "name": {
+          "value": "Payment details"
+        }
+      }
+    },
+    {
+      "id": "cd-welcome-cover",
+      "type": "contains_document",
+      "roles": {
+        "letter": [
+          "let-welcome"
+        ],
+        "document": [
+          "doc-cover"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cd-welcome-summary",
+      "type": "contains_document",
+      "roles": {
+        "letter": [
+          "let-welcome"
+        ],
+        "document": [
+          "doc-summary"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cd-welcome-terms",
+      "type": "contains_document",
+      "roles": {
+        "letter": [
+          "let-welcome"
+        ],
+        "document": [
+          "doc-terms"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cd-welcome-sepa",
+      "type": "contains_document",
+      "roles": {
+        "letter": [
+          "let-welcome"
+        ],
+        "document": [
+          "doc-sepa"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cd-change-cover",
+      "type": "contains_document",
+      "roles": {
+        "letter": [
+          "let-change"
+        ],
+        "document": [
+          "doc-cover"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cd-change-summary",
+      "type": "contains_document",
+      "roles": {
+        "letter": [
+          "let-change"
+        ],
+        "document": [
+          "doc-summary"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cd-cancel-cover",
+      "type": "contains_document",
+      "roles": {
+        "letter": [
+          "let-cancel"
+        ],
+        "document": [
+          "doc-cover"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cd-reminder-1-cover",
+      "type": "contains_document",
+      "roles": {
+        "letter": [
+          "let-reminder-1"
+        ],
+        "document": [
+          "doc-cover"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cd-reminder-1-invoice",
+      "type": "contains_document",
+      "roles": {
+        "letter": [
+          "let-reminder-1"
+        ],
+        "document": [
+          "doc-invoice"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cd-reminder-2-cover",
+      "type": "contains_document",
+      "roles": {
+        "letter": [
+          "let-reminder-2"
+        ],
+        "document": [
+          "doc-cover"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cd-reminder-2-invoice",
+      "type": "contains_document",
+      "roles": {
+        "letter": [
+          "let-reminder-2"
+        ],
+        "document": [
+          "doc-invoice"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cp-cover-address",
+      "type": "contains_part",
+      "roles": {
+        "document": [
+          "doc-cover"
+        ],
+        "part": [
+          "part-address"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cp-cover-salutation",
+      "type": "contains_part",
+      "roles": {
+        "document": [
+          "doc-cover"
+        ],
+        "part": [
+          "part-salutation"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cp-cover-signature",
+      "type": "contains_part",
+      "roles": {
+        "document": [
+          "doc-cover"
+        ],
+        "part": [
+          "part-signature"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cp-summary-tariff",
+      "type": "contains_part",
+      "roles": {
+        "document": [
+          "doc-summary"
+        ],
+        "part": [
+          "part-tariff-table"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cp-terms-legal",
+      "type": "contains_part",
+      "roles": {
+        "document": [
+          "doc-terms"
+        ],
+        "part": [
+          "part-legal-notice"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cp-invoice-payment",
+      "type": "contains_part",
+      "roles": {
+        "document": [
+          "doc-invoice"
+        ],
+        "part": [
+          "part-payment-details"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cp-sepa-payment",
+      "type": "contains_part",
+      "roles": {
+        "document": [
+          "doc-sepa"
+        ],
+        "part": [
+          "part-payment-details"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cs-tariff-row",
+      "type": "contains_subpart",
+      "roles": {
+        "parent": [
+          "part-tariff-table"
+        ],
+        "child": [
+          "part-tariff-row"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cs-legal-privacy",
+      "type": "contains_subpart",
+      "roles": {
+        "parent": [
+          "part-legal-notice"
+        ],
+        "child": [
+          "part-privacy-notice"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cs-privacy-contact",
+      "type": "contains_subpart",
+      "roles": {
+        "parent": [
+          "part-privacy-notice"
+        ],
+        "child": [
+          "part-privacy-contact"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cond-sepa-payer",
+      "type": "condition",
+      "attributes": {
+        "name": {
+          "value": "Customer pays by direct debit"
+        },
+        "description": {
+          "value": "The customer has given a **SEPA mandate**."
+        },
+        "expression": {
+          "value": "payment.method == 'SEPA'"
+        }
+      }
+    },
+    {
+      "id": "cond-private",
+      "type": "condition",
+      "attributes": {
+        "name": {
+          "value": "Private customer"
+        },
+        "description": {
+          "value": "Only for natural persons."
+        },
+        "expression": {
+          "value": "partner.type == 'natural_person'"
+        }
+      }
+    },
+    {
+      "id": "cond-multi-tariff",
+      "type": "condition",
+      "attributes": {
+        "name": {
+          "value": "More than one tariff"
+        },
+        "expression": {
+          "value": "count(contract.tariffs) > 1"
+        }
+      }
+    },
+    {
+      "id": "aw-welcome-sepa",
+      "type": "appears_when",
+      "roles": {
+        "target": [
+          "cd-welcome-sepa"
+        ],
+        "condition": [
+          "cond-sepa-payer"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "aw-sepa-payment",
+      "type": "appears_when",
+      "roles": {
+        "target": [
+          "cp-sepa-payment"
+        ],
+        "condition": [
+          "cond-sepa-payer"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "aw-privacy",
+      "type": "appears_when",
+      "roles": {
+        "target": [
+          "cs-legal-privacy"
+        ],
+        "condition": [
+          "cond-private"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "aw-salutation",
+      "type": "appears_when",
+      "roles": {
+        "target": [
+          "cp-cover-salutation"
+        ],
+        "condition": [
+          "cond-private"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "aw-tariff-row",
+      "type": "appears_when",
+      "roles": {
+        "target": [
+          "cs-tariff-row"
+        ],
+        "condition": [
+          "cond-multi-tariff"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "dig-partner",
+      "type": "data_item_group",
+      "attributes": {
+        "name": {
+          "value": "Partner data"
+        }
+      }
+    },
+    {
+      "id": "dig-contract",
+      "type": "data_item_group",
+      "attributes": {
+        "name": {
+          "value": "Contract data"
+        }
+      }
+    },
+    {
+      "id": "dig-payment",
+      "type": "data_item_group",
+      "attributes": {
+        "name": {
+          "value": "Payment data"
+        }
+      }
+    },
+    {
+      "id": "di-partner-name",
+      "type": "data_item",
+      "attributes": {
+        "name": {
+          "value": "Partner name"
+        },
+        "data_type": {
+          "value": "string"
+        }
+      }
+    },
+    {
+      "id": "di-partner-first-name",
+      "type": "data_item",
+      "attributes": {
+        "name": {
+          "value": "Partner first name"
+        },
+        "data_type": {
+          "value": "string"
+        }
+      }
+    },
+    {
+      "id": "di-contract-no",
+      "type": "data_item",
+      "attributes": {
+        "name": {
+          "value": "Contract number"
+        },
+        "data_type": {
+          "value": "string"
+        }
+      }
+    },
+    {
+      "id": "di-contract-start",
+      "type": "data_item",
+      "attributes": {
+        "name": {
+          "value": "Contract start"
+        },
+        "data_type": {
+          "value": "date"
+        }
+      }
+    },
+    {
+      "id": "di-cancel-date",
+      "type": "data_item",
+      "attributes": {
+        "name": {
+          "value": "Cancellation date"
+        },
+        "data_type": {
+          "value": "date"
+        }
+      }
+    },
+    {
+      "id": "di-amount-due",
+      "type": "data_item",
+      "attributes": {
+        "name": {
+          "value": "Amount due"
+        },
+        "data_type": {
+          "value": "number"
+        }
+      }
+    },
+    {
+      "id": "di-due-date",
+      "type": "data_item",
+      "attributes": {
+        "name": {
+          "value": "Due date"
+        },
+        "data_type": {
+          "value": "date"
+        }
+      }
+    },
+    {
+      "id": "di-dunning-fee",
+      "type": "data_item",
+      "attributes": {
+        "name": {
+          "value": "Dunning fee"
+        },
+        "data_type": {
+          "value": "number"
+        }
+      }
+    },
+    {
+      "id": "ig-partner-name",
+      "type": "in_group",
+      "roles": {
+        "item": [
+          "di-partner-name"
+        ],
+        "group": [
+          "dig-partner"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "ig-partner-first-name",
+      "type": "in_group",
+      "roles": {
+        "item": [
+          "di-partner-first-name"
+        ],
+        "group": [
+          "dig-partner"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "ig-contract-no",
+      "type": "in_group",
+      "roles": {
+        "item": [
+          "di-contract-no"
+        ],
+        "group": [
+          "dig-contract"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "ig-contract-start",
+      "type": "in_group",
+      "roles": {
+        "item": [
+          "di-contract-start"
+        ],
+        "group": [
+          "dig-contract"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "ig-cancel-date",
+      "type": "in_group",
+      "roles": {
+        "item": [
+          "di-cancel-date"
+        ],
+        "group": [
+          "dig-contract"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "ig-amount-due",
+      "type": "in_group",
+      "roles": {
+        "item": [
+          "di-amount-due"
+        ],
+        "group": [
+          "dig-payment"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "ig-due-date",
+      "type": "in_group",
+      "roles": {
+        "item": [
+          "di-due-date"
+        ],
+        "group": [
+          "dig-payment"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "ig-dunning-fee",
+      "type": "in_group",
+      "roles": {
+        "item": [
+          "di-dunning-fee"
+        ],
+        "group": [
+          "dig-payment"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "nd-contract-partner",
+      "type": "needs_data",
+      "roles": {
+        "consumer": [
+          "grp-contract"
+        ],
+        "data": [
+          "dig-partner"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "nd-billing-payment",
+      "type": "needs_data",
+      "roles": {
+        "consumer": [
+          "grp-billing"
+        ],
+        "data": [
+          "dig-payment"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "nd-welcome-no",
+      "type": "needs_data",
+      "roles": {
+        "consumer": [
+          "let-welcome"
+        ],
+        "data": [
+          "di-contract-no"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "nd-welcome-start",
+      "type": "needs_data",
+      "roles": {
+        "consumer": [
+          "let-welcome"
+        ],
+        "data": [
+          "di-contract-start"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "nd-cancel-date",
+      "type": "needs_data",
+      "roles": {
+        "consumer": [
+          "let-cancel"
+        ],
+        "data": [
+          "di-cancel-date"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "nd-reminder-2-fee",
+      "type": "needs_data",
+      "roles": {
+        "consumer": [
+          "let-reminder-2"
+        ],
+        "data": [
+          "di-dunning-fee"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "dst-partner",
+      "type": "data_structure_type",
+      "attributes": {
+        "name": {
+          "value": "partner"
+        }
+      }
+    },
+    {
+      "id": "dst-bank-account",
+      "type": "data_structure_type",
+      "attributes": {
+        "name": {
+          "value": "bank_account"
+        }
+      }
+    },
+    {
+      "id": "fld-partner-type",
+      "type": "data_structure_field",
+      "attributes": {
+        "name": {
+          "value": "type"
+        },
+        "data_type": {
+          "value": "enum"
+        },
+        "allowed_values": {
+          "value": "natural_person, legal_person"
+        }
+      }
+    },
+    {
+      "id": "fld-partner-name",
+      "type": "data_structure_field",
+      "attributes": {
+        "name": {
+          "value": "name"
+        },
+        "data_type": {
+          "value": "string"
+        }
+      }
+    },
+    {
+      "id": "fld-partner-first-name",
+      "type": "data_structure_field",
+      "attributes": {
+        "name": {
+          "value": "first_name"
+        },
+        "data_type": {
+          "value": "string"
+        }
+      }
+    },
+    {
+      "id": "fld-partner-birth-date",
+      "type": "data_structure_field",
+      "attributes": {
+        "name": {
+          "value": "birth_date"
+        },
+        "data_type": {
+          "value": "date"
+        }
+      }
+    },
+    {
+      "id": "fld-bank-iban",
+      "type": "data_structure_field",
+      "attributes": {
+        "name": {
+          "value": "iban"
+        },
+        "data_type": {
+          "value": "string"
+        }
+      }
+    },
+    {
+      "id": "fld-bank-bic",
+      "type": "data_structure_field",
+      "attributes": {
+        "name": {
+          "value": "bic"
+        },
+        "data_type": {
+          "value": "string"
+        }
+      }
+    },
+    {
+      "id": "fld-bank-holder",
+      "type": "data_structure_field",
+      "attributes": {
+        "name": {
+          "value": "holder"
+        },
+        "data_type": {
+          "value": "string"
+        }
+      }
+    },
+    {
+      "id": "hf-partner",
+      "type": "has_fields",
+      "roles": {
+        "type": [
+          "dst-partner"
+        ],
+        "fields": [
+          "fld-partner-type",
+          "fld-partner-name",
+          "fld-partner-first-name",
+          "fld-partner-birth-date"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "hf-bank-account",
+      "type": "has_fields",
+      "roles": {
+        "type": [
+          "dst-bank-account"
+        ],
+        "fields": [
+          "fld-bank-iban",
+          "fld-bank-bic",
+          "fld-bank-holder"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "ds-policyholder",
+      "type": "data_structure",
+      "attributes": {
+        "name": {
+          "value": "Policyholder"
+        }
+      }
+    },
+    {
+      "id": "ds-payer",
+      "type": "data_structure",
+      "attributes": {
+        "name": {
+          "value": "Payer"
+        }
+      }
+    },
+    {
+      "id": "ds-payer-account",
+      "type": "data_structure",
+      "attributes": {
+        "name": {
+          "value": "Payer bank account"
+        }
+      }
+    },
+    {
+      "id": "ta-policyholder",
+      "type": "typed_as",
+      "roles": {
+        "structure": [
+          "ds-policyholder"
+        ],
+        "type": [
+          "dst-partner"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "ta-payer",
+      "type": "typed_as",
+      "roles": {
+        "structure": [
+          "ds-payer"
+        ],
+        "type": [
+          "dst-partner"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "ta-payer-account",
+      "type": "typed_as",
+      "roles": {
+        "structure": [
+          "ds-payer-account"
+        ],
+        "type": [
+          "dst-bank-account"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "us-contract-policyholder",
+      "type": "uses_structure",
+      "roles": {
+        "consumer": [
+          "grp-contract"
+        ],
+        "structure": [
+          "ds-policyholder"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "us-welcome-account",
+      "type": "uses_structure",
+      "roles": {
+        "consumer": [
+          "let-welcome"
+        ],
+        "structure": [
+          "ds-payer-account"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "us-billing-payer",
+      "type": "uses_structure",
+      "roles": {
+        "consumer": [
+          "grp-billing"
+        ],
+        "structure": [
+          "ds-payer"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "src-crm",
+      "type": "datasource",
+      "attributes": {
+        "name": {
+          "value": "CRM"
+        }
+      }
+    },
+    {
+      "id": "src-contract",
+      "type": "datasource",
+      "attributes": {
+        "name": {
+          "value": "Contract system"
+        }
+      }
+    },
+    {
+      "id": "src-billing",
+      "type": "datasource",
+      "attributes": {
+        "name": {
+          "value": "Billing system"
+        }
+      }
+    },
+    {
+      "id": "pb-partner-name",
+      "type": "provided_by",
+      "roles": {
+        "data": [
+          "di-partner-name"
+        ],
+        "source": [
+          "src-crm"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "pb-partner-first-name",
+      "type": "provided_by",
+      "roles": {
+        "data": [
+          "di-partner-first-name"
+        ],
+        "source": [
+          "src-crm"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "pb-contract-no",
+      "type": "provided_by",
+      "roles": {
+        "data": [
+          "di-contract-no"
+        ],
+        "source": [
+          "src-contract"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "pb-contract-start",
+      "type": "provided_by",
+      "roles": {
+        "data": [
+          "di-contract-start"
+        ],
+        "source": [
+          "src-contract"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "pb-cancel-date",
+      "type": "provided_by",
+      "roles": {
+        "data": [
+          "di-cancel-date"
+        ],
+        "source": [
+          "src-contract"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "pb-amount-due",
+      "type": "provided_by",
+      "roles": {
+        "data": [
+          "di-amount-due"
+        ],
+        "source": [
+          "src-billing"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "pb-due-date",
+      "type": "provided_by",
+      "roles": {
+        "data": [
+          "di-due-date"
+        ],
+        "source": [
+          "src-billing"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "pb-dunning-fee",
+      "type": "provided_by",
+      "roles": {
+        "data": [
+          "di-dunning-fee"
+        ],
+        "source": [
+          "src-billing"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "pb-policyholder",
+      "type": "provided_by",
+      "roles": {
+        "data": [
+          "ds-policyholder"
+        ],
+        "source": [
+          "src-crm"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "pb-payer",
+      "type": "provided_by",
+      "roles": {
+        "data": [
+          "ds-payer"
+        ],
+        "source": [
+          "src-crm"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "pb-payer-account-billing",
+      "type": "provided_by",
+      "roles": {
+        "data": [
+          "ds-payer-account"
+        ],
+        "source": [
+          "src-billing"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "pb-payer-account-crm",
+      "type": "provided_by",
+      "roles": {
+        "data": [
+          "ds-payer-account"
+        ],
+        "source": [
+          "src-crm"
+        ]
+      },
+      "attributes": {}
+    }
+  ],
+  "presentation": {
+    "types": {
+      "business_function": {
+        "label": "Business function",
+        "icon": "🏛",
+        "title_attribute": "name"
+      },
+      "business_letter_group": {
+        "label": "Letter group",
+        "icon": "🗂",
+        "title_attribute": "name"
+      },
+      "business_letter": {
+        "label": "Business letter",
+        "icon": "✉",
+        "title_attribute": "name",
+        "attribute_order": [
+          "name",
+          "description"
+        ]
+      },
+      "document": {
+        "label": "Document",
+        "icon": "📄",
+        "title_attribute": "name"
+      },
+      "document_part": {
+        "label": "Document part",
+        "icon": "🧱",
+        "title_attribute": "name"
+      },
+      "condition": {
+        "label": "Condition",
+        "icon": "❓",
+        "title_attribute": "name",
+        "attribute_order": [
+          "name",
+          "expression",
+          "description"
+        ]
+      },
+      "data_item_group": {
+        "label": "Data item group",
+        "icon": "🗃",
+        "title_attribute": "name"
+      },
+      "data_item": {
+        "label": "Data item",
+        "icon": "🔹",
+        "title_attribute": "name",
+        "attribute_order": [
+          "name",
+          "data_type"
+        ]
+      },
+      "data_structure": {
+        "label": "Data structure",
+        "icon": "🧾",
+        "title_attribute": "name"
+      },
+      "data_structure_type": {
+        "label": "Structure type",
+        "icon": "📐",
+        "title_attribute": "name"
+      },
+      "data_structure_field": {
+        "label": "Field",
+        "icon": "▫",
+        "title_attribute": "name",
+        "attribute_order": [
+          "name",
+          "data_type",
+          "allowed_values"
+        ]
+      },
+      "datasource": {
+        "label": "Data source",
+        "icon": "🗄",
+        "title_attribute": "name"
+      },
+      "supports": {
+        "label": "supports",
+        "as_edge": true
+      },
+      "member_of": {
+        "label": "member of",
+        "as_edge": true
+      },
+      "contains_document": {
+        "label": "contains document",
+        "as_edge": true
+      },
+      "contains_part": {
+        "label": "contains part",
+        "as_edge": true
+      },
+      "contains_subpart": {
+        "label": "contains part",
+        "as_edge": true
+      },
+      "appears_when": {
+        "label": "appears when",
+        "as_edge": true
+      },
+      "in_group": {
+        "label": "in group",
+        "as_edge": true
+      },
+      "needs_data": {
+        "label": "needs data",
+        "as_edge": true
+      },
+      "uses_structure": {
+        "label": "uses structure",
+        "as_edge": true
+      },
+      "typed_as": {
+        "label": "typed as",
+        "as_edge": true
+      },
+      "has_fields": {
+        "label": "has fields"
+      },
+      "provided_by": {
+        "label": "provided by",
+        "as_edge": true
+      }
+    },
+    "views": [
+      {
+        "id": "structure",
+        "label": "Letter structure",
+        "kind": "tree",
+        "root_type": "business_letter_group",
+        "levels": [
+          {
+            "via": "member_of",
+            "from_role": "group",
+            "to_role": "letter"
+          },
+          {
+            "via": "contains_document",
+            "from_role": "letter",
+            "to_role": "document"
+          },
+          {
+            "via": "contains_part",
+            "from_role": "document",
+            "to_role": "part"
+          },
+          {
+            "via": "contains_subpart",
+            "from_role": "parent",
+            "to_role": "child",
+            "repeat": true
+          }
+        ]
+      },
+      {
+        "id": "letters",
+        "label": "All business letters",
+        "kind": "list",
+        "type": "business_letter"
+      },
+      {
+        "id": "documents",
+        "label": "All documents",
+        "kind": "list",
+        "type": "document"
+      },
+      {
+        "id": "parts",
+        "label": "All document parts",
+        "kind": "list",
+        "type": "document_part"
+      },
+      {
+        "id": "conditions",
+        "label": "All conditions",
+        "kind": "list",
+        "type": "condition"
+      },
+      {
+        "id": "data-items",
+        "label": "All data items",
+        "kind": "list",
+        "type": "data_item"
+      },
+      {
+        "id": "structures",
+        "label": "All data structures",
+        "kind": "list",
+        "type": "data_structure"
+      },
+      {
+        "id": "fields",
+        "label": "All structure fields",
+        "kind": "list",
+        "type": "data_structure_field"
+      }
+    ]
+  }
+}

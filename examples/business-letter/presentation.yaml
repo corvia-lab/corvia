@@ -1,0 +1,42 @@
+types:
+  business_function: { label: Business function, icon: "🏛", title_attribute: name }
+  business_letter_group: { label: Letter group, icon: "🗂", title_attribute: name }
+  business_letter: { label: Business letter, icon: "✉", title_attribute: name, attribute_order: [name, description] }
+  document: { label: Document, icon: "📄", title_attribute: name }
+  document_part: { label: Document part, icon: "🧱", title_attribute: name }
+  condition: { label: Condition, icon: "❓", title_attribute: name, attribute_order: [name, expression, description] }
+  data_item_group: { label: Data item group, icon: "🗃", title_attribute: name }
+  data_item: { label: Data item, icon: "🔹", title_attribute: name, attribute_order: [name, data_type] }
+  data_structure: { label: Data structure, icon: "🧾", title_attribute: name }
+  data_structure_type: { label: Structure type, icon: "📐", title_attribute: name }
+  data_structure_field: { label: Field, icon: "▫", title_attribute: name, attribute_order: [name, data_type, allowed_values] }
+  datasource: { label: Data source, icon: "🗄", title_attribute: name }
+  supports: { label: supports, as_edge: true }
+  member_of: { label: member of, as_edge: true }
+  contains_document: { label: contains document, as_edge: true }
+  contains_part: { label: contains part, as_edge: true }
+  contains_subpart: { label: contains part, as_edge: true }
+  appears_when: { label: appears when, as_edge: true }
+  in_group: { label: in group, as_edge: true }
+  needs_data: { label: needs data, as_edge: true }
+  uses_structure: { label: uses structure, as_edge: true }
+  typed_as: { label: typed as, as_edge: true }
+  has_fields: { label: has fields }
+  provided_by: { label: provided by, as_edge: true }
+views:
+  - id: structure
+    label: Letter structure
+    kind: tree
+    root_type: business_letter_group
+    levels:
+      - { via: member_of, from_role: group, to_role: letter }
+      - { via: contains_document, from_role: letter, to_role: document }
+      - { via: contains_part, from_role: document, to_role: part }
+      - { via: contains_subpart, from_role: parent, to_role: child, repeat: true }
+  - { id: letters, label: All business letters, kind: list, type: business_letter }
+  - { id: documents, label: All documents, kind: list, type: document }
+  - { id: parts, label: All document parts, kind: list, type: document_part }
+  - { id: conditions, label: All conditions, kind: list, type: condition }
+  - { id: data-items, label: All data items, kind: list, type: data_item }
+  - { id: structures, label: All data structures, kind: list, type: data_structure }
+  - { id: fields, label: All structure fields, kind: list, type: data_structure_field }

@@ -24,6 +24,8 @@ All **facts**, shown by the example models and their tests:
 - **Pending changes** (D5): deltas in both directions, including a conflict, stored in the YAML and handled by the prototype.
 - **Multiplicities** (`count`, `per_item`) and **uniqueness**, checked by the validator.
 
+- **Business letters** (D9, third example): every relationship the maintainer named could be expressed without changing the meta-model. This includes conditions as items attached to "contains" relationships (relationship → relationship, reused in several places), roles open to two types ("letter group *or* letter" ↔ "data item group *or* data item"), parts nested in parts, and structure types whose fields are ordinary items. **Opinion:** the last point shows that a "type with typed fields" can itself be modeled as items. That is a first hint for a later question: could corvia describe its own meta-model this way?
+
 ## Where it needed workarounds
 
 Observed while building the example models (Tasks 3 and 4):
@@ -50,6 +52,11 @@ Observed while building the example models (Tasks 3 and 4):
 | Preferred graph view | not built | Not needed for the use case so far. Open. |
 
 **From the maintainer's first review (fact):** list views need to work as tables: search, sort, filter, choose columns, edit in place, and one column per relationship type. Text attributes need multi-line Markdown. Both were added to the prototype. **Assumption:** column choice and filters are personal view state, not part of the presentation layer; the presentation layer only provides the default order.
+
+**From the business letter example (fact):**
+- Trees needed a **repeating level** (`repeat: true`) for parts inside parts at any depth. Added to the presentation layer.
+- Relationships that are players of other relationships (a condition on "letter contains document") were shown only by their ID. **Added:** an unnamed relationship gets a title from its players, e.g. "Welcome letter → SEPA direct debit mandate".
+- The tree shows *that* a part belongs to a document, but not *under which condition*. Conditions are only visible in the details of the relationship. Open: should a tree show attributes or relationships of the hop it follows?
 
 **Found while using it (fact):** tree levels follow a relationship without filtering by type. In the overview, "Remote access" (an external service that connects *to* instance 1) appears under instance 1 in the "(none)" group, next to devices. A level needs an optional **type filter**. Not fixed in the prototype, so the effect stays visible.
 
@@ -91,6 +98,14 @@ Agent working time per task, from commit times (approximate, **fact**). Human re
 
 **Observation (opinion):** once the design and the plan were agreed, implementation took about 20 minutes of agent time. The exploration with the human took about 2.5 hours. The evaluation by the maintainer is still to come, so a full cycle cannot be measured yet.
 ## Open questions for stage 2
+
+**UI fine-tuning deferred by the maintainer** (feedback on PR #1, theme: focus on what is of interest right now):
+- The detail view opens only when an item in a list is clicked, and it can be closed at any time.
+- Filter fields are as wide as their column.
+- The overview tree can be collapsed and expanded per node, or all at once down to a chosen level.
+- Filters in the overview tree as well.
+- Volumes from the business letter domain (up to 800,000 relationships, up to 2,000 data items per letter) need paging, lazy loading or server-side queries. The static prototype is not built for that.
+
 
 1. **Relationship deltas:** should a source be able to report changes of relationships (a device that moved), with the same check step as attributes?
 2. **Identity across sources:** how are "the same thing seen in two sources" handled: a `same_as` relationship, merging, or a meta-model feature?

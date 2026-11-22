@@ -1,0 +1,173 @@
+# Invented example data for the business letter domain.
+items:
+  # --- Business functions, letter groups, letters ------------------------------
+  - { id: bf-onboarding, type: business_function, attributes: { name: Customer onboarding } }
+  - { id: bf-contract, type: business_function, attributes: { name: Contract management } }
+  - { id: bf-dunning, type: business_function, attributes: { name: Dunning } }
+
+  - { id: grp-contract, type: business_letter_group, attributes: { name: Contract letters } }
+  - { id: grp-billing, type: business_letter_group, attributes: { name: Billing letters } }
+
+  - id: let-welcome
+    type: business_letter
+    attributes:
+      name: Welcome letter
+      description: "Sent once after the contract is signed.\n\n- cover letter\n- contract summary\n- terms"
+  - { id: let-change, type: business_letter, attributes: { name: Contract change confirmation } }
+  - { id: let-cancel, type: business_letter, attributes: { name: Cancellation confirmation } }
+  - { id: let-reminder-1, type: business_letter, attributes: { name: First payment reminder } }
+  - { id: let-reminder-2, type: business_letter, attributes: { name: Second payment reminder } }
+
+  - { id: sup-welcome, type: supports, roles: { function: [bf-onboarding], letter: [let-welcome] } }
+  - { id: sup-welcome-contract, type: supports, roles: { function: [bf-contract], letter: [let-welcome] } }
+  - { id: sup-change, type: supports, roles: { function: [bf-contract], letter: [let-change] } }
+  - { id: sup-cancel, type: supports, roles: { function: [bf-contract], letter: [let-cancel] } }
+  - { id: sup-reminder-1, type: supports, roles: { function: [bf-dunning], letter: [let-reminder-1] } }
+  - { id: sup-reminder-2, type: supports, roles: { function: [bf-dunning], letter: [let-reminder-2] } }
+
+  - { id: mem-welcome, type: member_of, roles: { letter: [let-welcome], group: [grp-contract] } }
+  - { id: mem-change, type: member_of, roles: { letter: [let-change], group: [grp-contract] } }
+  - { id: mem-cancel, type: member_of, roles: { letter: [let-cancel], group: [grp-contract] } }
+  - { id: mem-reminder-1, type: member_of, roles: { letter: [let-reminder-1], group: [grp-billing] } }
+  - { id: mem-reminder-2, type: member_of, roles: { letter: [let-reminder-2], group: [grp-billing] } }
+
+  # --- Documents and parts -------------------------------------------------------
+  - { id: doc-cover, type: document, attributes: { name: Cover letter } }
+  - { id: doc-summary, type: document, attributes: { name: Contract summary } }
+  - { id: doc-terms, type: document, attributes: { name: Terms and conditions } }
+  - { id: doc-invoice, type: document, attributes: { name: Invoice } }
+  - { id: doc-sepa, type: document, attributes: { name: SEPA direct debit mandate } }
+
+  - { id: part-address, type: document_part, attributes: { name: Address block } }
+  - { id: part-salutation, type: document_part, attributes: { name: Salutation } }
+  - { id: part-signature, type: document_part, attributes: { name: Signature } }
+  - { id: part-tariff-table, type: document_part, attributes: { name: Tariff table } }
+  - { id: part-tariff-row, type: document_part, attributes: { name: Tariff row } }
+  - { id: part-legal-notice, type: document_part, attributes: { name: Legal notice } }
+  - { id: part-privacy-notice, type: document_part, attributes: { name: Privacy notice } }
+  - { id: part-privacy-contact, type: document_part, attributes: { name: Data protection officer contact } }
+  - { id: part-payment-details, type: document_part, attributes: { name: Payment details } }
+
+  - { id: cd-welcome-cover, type: contains_document, roles: { letter: [let-welcome], document: [doc-cover] } }
+  - { id: cd-welcome-summary, type: contains_document, roles: { letter: [let-welcome], document: [doc-summary] } }
+  - { id: cd-welcome-terms, type: contains_document, roles: { letter: [let-welcome], document: [doc-terms] } }
+  - { id: cd-welcome-sepa, type: contains_document, roles: { letter: [let-welcome], document: [doc-sepa] } }
+  - { id: cd-change-cover, type: contains_document, roles: { letter: [let-change], document: [doc-cover] } }
+  - { id: cd-change-summary, type: contains_document, roles: { letter: [let-change], document: [doc-summary] } }
+  - { id: cd-cancel-cover, type: contains_document, roles: { letter: [let-cancel], document: [doc-cover] } }
+  - { id: cd-reminder-1-cover, type: contains_document, roles: { letter: [let-reminder-1], document: [doc-cover] } }
+  - { id: cd-reminder-1-invoice, type: contains_document, roles: { letter: [let-reminder-1], document: [doc-invoice] } }
+  - { id: cd-reminder-2-cover, type: contains_document, roles: { letter: [let-reminder-2], document: [doc-cover] } }
+  - { id: cd-reminder-2-invoice, type: contains_document, roles: { letter: [let-reminder-2], document: [doc-invoice] } }
+
+  - { id: cp-cover-address, type: contains_part, roles: { document: [doc-cover], part: [part-address] } }
+  - { id: cp-cover-salutation, type: contains_part, roles: { document: [doc-cover], part: [part-salutation] } }
+  - { id: cp-cover-signature, type: contains_part, roles: { document: [doc-cover], part: [part-signature] } }
+  - { id: cp-summary-tariff, type: contains_part, roles: { document: [doc-summary], part: [part-tariff-table] } }
+  - { id: cp-terms-legal, type: contains_part, roles: { document: [doc-terms], part: [part-legal-notice] } }
+  - { id: cp-invoice-payment, type: contains_part, roles: { document: [doc-invoice], part: [part-payment-details] } }
+  - { id: cp-sepa-payment, type: contains_part, roles: { document: [doc-sepa], part: [part-payment-details] } }
+
+  - { id: cs-tariff-row, type: contains_subpart, roles: { parent: [part-tariff-table], child: [part-tariff-row] } }
+  - { id: cs-legal-privacy, type: contains_subpart, roles: { parent: [part-legal-notice], child: [part-privacy-notice] } }
+  - { id: cs-privacy-contact, type: contains_subpart, roles: { parent: [part-privacy-notice], child: [part-privacy-contact] } }
+
+  # --- Conditions: own items, attached to "contains" relationships ------------
+  - id: cond-sepa-payer
+    type: condition
+    attributes:
+      name: Customer pays by direct debit
+      description: The customer has given a **SEPA mandate**.
+      expression: payment.method == 'SEPA'
+  - id: cond-private
+    type: condition
+    attributes:
+      name: Private customer
+      description: Only for natural persons.
+      expression: partner.type == 'natural_person'
+  - id: cond-multi-tariff
+    type: condition
+    attributes:
+      name: More than one tariff
+      expression: count(contract.tariffs) > 1
+
+  - { id: aw-welcome-sepa, type: appears_when, roles: { target: [cd-welcome-sepa], condition: [cond-sepa-payer] } }
+  - { id: aw-sepa-payment, type: appears_when, roles: { target: [cp-sepa-payment], condition: [cond-sepa-payer] } }
+  - { id: aw-privacy, type: appears_when, roles: { target: [cs-legal-privacy], condition: [cond-private] } }
+  - { id: aw-salutation, type: appears_when, roles: { target: [cp-cover-salutation], condition: [cond-private] } }
+  - { id: aw-tariff-row, type: appears_when, roles: { target: [cs-tariff-row], condition: [cond-multi-tariff] } }
+
+  # --- Data items and groups ---------------------------------------------------------
+  - { id: dig-partner, type: data_item_group, attributes: { name: Partner data } }
+  - { id: dig-contract, type: data_item_group, attributes: { name: Contract data } }
+  - { id: dig-payment, type: data_item_group, attributes: { name: Payment data } }
+
+  - { id: di-partner-name, type: data_item, attributes: { name: Partner name, data_type: string } }
+  - { id: di-partner-first-name, type: data_item, attributes: { name: Partner first name, data_type: string } }
+  - { id: di-contract-no, type: data_item, attributes: { name: Contract number, data_type: string } }
+  - { id: di-contract-start, type: data_item, attributes: { name: Contract start, data_type: date } }
+  - { id: di-cancel-date, type: data_item, attributes: { name: Cancellation date, data_type: date } }
+  - { id: di-amount-due, type: data_item, attributes: { name: Amount due, data_type: number } }
+  - { id: di-due-date, type: data_item, attributes: { name: Due date, data_type: date } }
+  - { id: di-dunning-fee, type: data_item, attributes: { name: Dunning fee, data_type: number } }
+
+  - { id: ig-partner-name, type: in_group, roles: { item: [di-partner-name], group: [dig-partner] } }
+  - { id: ig-partner-first-name, type: in_group, roles: { item: [di-partner-first-name], group: [dig-partner] } }
+  - { id: ig-contract-no, type: in_group, roles: { item: [di-contract-no], group: [dig-contract] } }
+  - { id: ig-contract-start, type: in_group, roles: { item: [di-contract-start], group: [dig-contract] } }
+  - { id: ig-cancel-date, type: in_group, roles: { item: [di-cancel-date], group: [dig-contract] } }
+  - { id: ig-amount-due, type: in_group, roles: { item: [di-amount-due], group: [dig-payment] } }
+  - { id: ig-due-date, type: in_group, roles: { item: [di-due-date], group: [dig-payment] } }
+  - { id: ig-dunning-fee, type: in_group, roles: { item: [di-dunning-fee], group: [dig-payment] } }
+
+  # A whole group is needed by a letter group; single items by single letters.
+  - { id: nd-contract-partner, type: needs_data, roles: { consumer: [grp-contract], data: [dig-partner] } }
+  - { id: nd-billing-payment, type: needs_data, roles: { consumer: [grp-billing], data: [dig-payment] } }
+  - { id: nd-welcome-no, type: needs_data, roles: { consumer: [let-welcome], data: [di-contract-no] } }
+  - { id: nd-welcome-start, type: needs_data, roles: { consumer: [let-welcome], data: [di-contract-start] } }
+  - { id: nd-cancel-date, type: needs_data, roles: { consumer: [let-cancel], data: [di-cancel-date] } }
+  - { id: nd-reminder-2-fee, type: needs_data, roles: { consumer: [let-reminder-2], data: [di-dunning-fee] } }
+
+  # --- Data structures, their types and fields -----------------------------------
+  - { id: dst-partner, type: data_structure_type, attributes: { name: partner } }
+  - { id: dst-bank-account, type: data_structure_type, attributes: { name: bank_account } }
+
+  - { id: fld-partner-type, type: data_structure_field, attributes: { name: type, data_type: enum, allowed_values: "natural_person, legal_person" } }
+  - { id: fld-partner-name, type: data_structure_field, attributes: { name: name, data_type: string } }
+  - { id: fld-partner-first-name, type: data_structure_field, attributes: { name: first_name, data_type: string } }
+  - { id: fld-partner-birth-date, type: data_structure_field, attributes: { name: birth_date, data_type: date } }
+  - { id: fld-bank-iban, type: data_structure_field, attributes: { name: iban, data_type: string } }
+  - { id: fld-bank-bic, type: data_structure_field, attributes: { name: bic, data_type: string } }
+  - { id: fld-bank-holder, type: data_structure_field, attributes: { name: holder, data_type: string } }
+
+  - { id: hf-partner, type: has_fields, roles: { type: [dst-partner], fields: [fld-partner-type, fld-partner-name, fld-partner-first-name, fld-partner-birth-date] } }
+  - { id: hf-bank-account, type: has_fields, roles: { type: [dst-bank-account], fields: [fld-bank-iban, fld-bank-bic, fld-bank-holder] } }
+
+  - { id: ds-policyholder, type: data_structure, attributes: { name: Policyholder } }
+  - { id: ds-payer, type: data_structure, attributes: { name: Payer } }
+  - { id: ds-payer-account, type: data_structure, attributes: { name: Payer bank account } }
+  - { id: ta-policyholder, type: typed_as, roles: { structure: [ds-policyholder], type: [dst-partner] } }
+  - { id: ta-payer, type: typed_as, roles: { structure: [ds-payer], type: [dst-partner] } }
+  - { id: ta-payer-account, type: typed_as, roles: { structure: [ds-payer-account], type: [dst-bank-account] } }
+
+  - { id: us-contract-policyholder, type: uses_structure, roles: { consumer: [grp-contract], structure: [ds-policyholder] } }
+  - { id: us-welcome-account, type: uses_structure, roles: { consumer: [let-welcome], structure: [ds-payer-account] } }
+  - { id: us-billing-payer, type: uses_structure, roles: { consumer: [grp-billing], structure: [ds-payer] } }
+
+  # --- Data sources ------------------------------------------------------------------
+  - { id: src-crm, type: datasource, attributes: { name: CRM } }
+  - { id: src-contract, type: datasource, attributes: { name: Contract system } }
+  - { id: src-billing, type: datasource, attributes: { name: Billing system } }
+
+  - { id: pb-partner-name, type: provided_by, roles: { data: [di-partner-name], source: [src-crm] } }
+  - { id: pb-partner-first-name, type: provided_by, roles: { data: [di-partner-first-name], source: [src-crm] } }
+  - { id: pb-contract-no, type: provided_by, roles: { data: [di-contract-no], source: [src-contract] } }
+  - { id: pb-contract-start, type: provided_by, roles: { data: [di-contract-start], source: [src-contract] } }
+  - { id: pb-cancel-date, type: provided_by, roles: { data: [di-cancel-date], source: [src-contract] } }
+  - { id: pb-amount-due, type: provided_by, roles: { data: [di-amount-due], source: [src-billing] } }
+  - { id: pb-due-date, type: provided_by, roles: { data: [di-due-date], source: [src-billing] } }
+  - { id: pb-dunning-fee, type: provided_by, roles: { data: [di-dunning-fee], source: [src-billing] } }
+  - { id: pb-policyholder, type: provided_by, roles: { data: [ds-policyholder], source: [src-crm] } }
+  - { id: pb-payer, type: provided_by, roles: { data: [ds-payer], source: [src-crm] } }
+  - { id: pb-payer-account-billing, type: provided_by, roles: { data: [ds-payer-account], source: [src-billing] } }
+  - { id: pb-payer-account-crm, type: provided_by, roles: { data: [ds-payer-account], source: [src-crm] } }

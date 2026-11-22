@@ -110,3 +110,48 @@ def test_enterprise_chain_exists():
     runs = {players(r, "application")[0]: players(r, "server")[0] for r in rels(items, "runs_on")}
     located = {players(r, "server")[0]: players(r, "datacenter")[0] for r in rels(items, "located_in")}
     assert any(app in runs and runs[app] in located for _, app in supported)
+
+
+@pytest.fixture(scope="module")
+def letters():
+    return load_folder(EXAMPLES / "business-letter")["items"]
+
+
+def test_business_letter_is_valid():
+    assert validate_folder(EXAMPLES / "business-letter") == []
+
+
+def test_condition_is_attached_to_relationships_and_reused(letters):
+    by_id = {i["id"]: i for i in letters}
+    uses = {}
+    for r in rels(letters, "appears_when"):
+        target = by_id[players(r, "target")[0]]
+        assert target["type"] in {"contains_document", "contains_part", "contains_subpart"}
+        uses.setdefault(players(r, "condition")[0], 0)
+        uses[players(r, "condition")[0]] += 1
+    assert max(uses.values()) >= 2
+
+
+def test_parts_are_nested_at_least_two_levels(letters):
+    children = {}
+    for r in rels(letters, "contains_subpart"):
+        children.setdefault(players(r, "parent")[0], []).append(players(r, "child")[0])
+    assert any(child in children for kids in children.values() for child in kids)
+
+
+def test_partner_structure_type_has_ordered_scalar_fields(letters):
+    by_id = {i["id"]: i for i in letters}
+    link = next(r for r in rels(letters, "has_fields") if players(r, "type")[0] == "dst-partner")
+    fields = [by_id[f] for f in players(link, "fields")]
+    assert [attr(f, "name")["value"] for f in fields] == ["type", "name", "first_name", "birth_date"]
+    assert [attr(f, "data_type")["value"] for f in fields] == ["enum", "string", "string", "date"]
+    assert attr(fields[0], "allowed_values")["value"] == "natural_person, legal_person"
+
+
+def test_letter_groups_and_letters_both_consume_data(letters):
+    by_id = {i["id"]: i for i in letters}
+    needs = rels(letters, "needs_data")
+    consumers = {by_id[players(r, "consumer")[0]]["type"] for r in needs}
+    data = {by_id[players(r, "data")[0]]["type"] for r in needs}
+    assert consumers == {"business_letter_group", "business_letter"}
+    assert data == {"data_item_group", "data_item"}

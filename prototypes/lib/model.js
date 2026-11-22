@@ -22,10 +22,20 @@ export function indexBundle(bundle) {
 
 const typePresentation = (index, typeName) => index.bundle.presentation?.types?.[typeName] ?? {};
 
-export function title(index, item) {
+export function title(index, item, seen = new Set()) {
   const attr = typePresentation(index, item.type).title_attribute;
   const value = attr ? item.attributes?.[attr]?.value : undefined;
-  return value === undefined || value === null || value === "" ? item.id : String(value);
+  if (value !== undefined && value !== null && value !== "") return String(value);
+  // A relationship without a name is titled by its players: "first role → other roles".
+  const spec = index.bundle.model.types[item.type];
+  if (spec?.kind === "relationship" && !seen.has(item.id)) {
+    const next = new Set([...seen, item.id]);
+    const names = (role) => (item.roles?.[role] ?? [])
+      .map((id) => index.byId.get(id)).map((p, i) => (p ? title(index, p, next) : item.roles[role][i])).join(", ");
+    const [first, ...rest] = Object.keys(spec.roles);
+    return `${names(first)} → ${rest.map(names).join(" · ")}`;
+  }
+  return item.id;
 }
 
 export function relationsOf(index, itemId) {
@@ -90,7 +100,9 @@ export function buildTree(index, view) {
     for (const child of childrenVia(index, item, level)) {
       const key = child.id ?? child.missing;
       if (path.has(key)) continue;
-      node.children.push(build(child, depth + 1, new Set([...path, key])));
+      // A repeating level applies again to its own children (e.g. parts inside parts).
+      const next = level.repeat ? depth : depth + 1;
+      node.children.push(build(child, next, new Set([...path, key])));
     }
     if (level.group_by) {
       const groups = new Map();

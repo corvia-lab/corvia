@@ -53,4 +53,4 @@ A delta has a `value` and a `status`: `open`, `superseded_by_source` or `failed`
 
 ## Presentation
 
-Presentation settings are not part of the meta-model (D3). Per type they set a `label`, an `icon`, a `title_attribute`, the `attribute_order`, whether a relationship type is shown as an edge (`as_edge`, only for relationships with exactly two roles of count 1) and a `drill_down` to the technical path. `views` define trees (levels along relationships, optionally grouped) and lists.
+Presentation settings are not part of the meta-model (D3). Per type they set a `label`, an `icon`, a `title_attribute`, the `attribute_order`, whether a relationship type is shown as an edge (`as_edge`, only for relationships with exactly two roles of count 1) and a `drill_down` to the technical path. `views` define trees (levels along relationships, optionally grouped; a level with `repeat: true` applies again to its own children, for nesting of any depth) and lists.

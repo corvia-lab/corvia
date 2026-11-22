@@ -1,5 +1,9 @@
 [
   {
+    "id": "business-letter",
+    "label": "business-letter"
+  },
+  {
     "id": "enterprise",
     "label": "enterprise"
   },

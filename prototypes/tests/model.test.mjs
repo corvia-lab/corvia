@@ -112,3 +112,20 @@ test("buildTree stops on a cycle", () => {
   assert.equal(x.children[0].item.id, "y");
   assert.deepEqual(x.children[0].children, []);
 });
+
+test("buildTree follows a repeating level to any depth", () => {
+  const letters = indexBundle(load("business-letter"));
+  const view = letters.bundle.presentation.views.find((v) => v.id === "structure");
+  const roots = buildTree(letters, view);
+  const path = (node, ids) => ids.length === 0 ? node : path(node.children.find((c) => c.item.id === ids[0]), ids.slice(1));
+  const group = roots.find((r) => r.item.id === "grp-contract");
+  const deepest = path(group, ["let-welcome", "doc-terms", "part-legal-notice", "part-privacy-notice", "part-privacy-contact"]);
+  assert.ok(deepest, "nested part found");
+  assert.deepEqual(deepest.children, []);
+});
+
+test("a relationship without title attribute gets a title from its players", () => {
+  const letters = indexBundle(load("business-letter"));
+  assert.equal(title(letters, letters.byId.get("cd-welcome-sepa")), "Welcome letter → SEPA direct debit mandate");
+  assert.equal(title(letters, letters.byId.get("hf-partner")), "partner → type, name, first_name, birth_date");
+});

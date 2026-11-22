@@ -141,6 +141,9 @@
               },
               "group_by": {
                 "$ref": "#/$defs/hop"
+              },
+              "repeat": {
+                "type": "boolean"
               }
             }
           }

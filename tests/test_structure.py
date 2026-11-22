@@ -48,3 +48,14 @@ def test_utf8_names_load(tmp_path):
     )
     folder = load_folder(tmp_path)
     assert folder["items"][0]["attributes"]["name"] == "Küche Licht"
+
+
+def test_tree_level_may_repeat():
+    presentation = {
+        "types": {},
+        "views": [{
+            "id": "t", "label": "T", "kind": "tree", "root_type": "thing",
+            "levels": [{"via": "link", "from_role": "a", "to_role": "b", "repeat": True}],
+        }],
+    }
+    assert structure_errors(presentation, "presentation") == []

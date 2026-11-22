@@ -22,6 +22,7 @@ Then open <http://localhost:8000>. In a GitHub Codespace, open the forwarded por
 5. Tick **fail** for a row and run the check: the row stays with status "failed".
 6. Open a list view (e.g. **All devices**): search, sort by clicking a column heading, filter per column, choose columns under **Columns**, and edit values in place. Relationship columns are marked with ↔.
 7. Edit **notes** of a device: the field takes Markdown (bold, lists, links) and is shown formatted.
+8. Open the **business-letter** model: the letter structure tree goes down to parts inside parts. Open the "contains document" relationship of the welcome letter and the SEPA mandate to see its condition.
 
 ## Files
 
