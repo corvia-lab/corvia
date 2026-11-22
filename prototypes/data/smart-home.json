@@ -1,0 +1,1911 @@
+{
+  "model": {
+    "model": "smart-home",
+    "connectors": [
+      "home-assistant",
+      "router",
+      "vendor-cloud"
+    ],
+    "types": {
+      "location": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          }
+        }
+      },
+      "host": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          },
+          "kind": {
+            "type": "enum",
+            "values": [
+              "server",
+              "vm_host",
+              "single_board"
+            ]
+          }
+        }
+      },
+      "ha_instance": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          },
+          "version": {
+            "type": "string"
+          }
+        }
+      },
+      "broker": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          }
+        }
+      },
+      "gateway": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          },
+          "kind": {
+            "type": "enum",
+            "values": [
+              "zigbee_coordinator",
+              "thread_border_router",
+              "rf433_receiver",
+              "rf433_bridge",
+              "ble_proxy",
+              "wifi_access_point"
+            ]
+          }
+        }
+      },
+      "vpn_tunnel": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          }
+        }
+      },
+      "external_service": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          },
+          "kind": {
+            "type": "enum",
+            "values": [
+              "weather",
+              "vendor_cloud",
+              "remote_access"
+            ]
+          }
+        }
+      },
+      "device_class": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          }
+        }
+      },
+      "device": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          },
+          "manufacturer": {
+            "type": "string"
+          },
+          "battery": {
+            "type": "enum",
+            "values": [
+              "ok",
+              "low",
+              "empty"
+            ]
+          },
+          "purchase_date": {
+            "type": "date"
+          },
+          "notes": {
+            "type": "text"
+          }
+        }
+      },
+      "runs_on": {
+        "kind": "relationship",
+        "roles": {
+          "guest": {
+            "types": [
+              "ha_instance",
+              "broker"
+            ],
+            "count": "1",
+            "per_item": "1"
+          },
+          "host": {
+            "types": [
+              "host"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          }
+        }
+      },
+      "hosted_at": {
+        "kind": "relationship",
+        "roles": {
+          "host": {
+            "types": [
+              "host"
+            ],
+            "count": "1",
+            "per_item": "1"
+          },
+          "location": {
+            "types": [
+              "location"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          }
+        }
+      },
+      "serves": {
+        "kind": "relationship",
+        "roles": {
+          "instance": {
+            "types": [
+              "ha_instance"
+            ],
+            "count": "1",
+            "per_item": "1..n"
+          },
+          "location": {
+            "types": [
+              "location"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          }
+        }
+      },
+      "located_at": {
+        "kind": "relationship",
+        "roles": {
+          "thing": {
+            "types": [
+              "device",
+              "gateway"
+            ],
+            "count": "1",
+            "per_item": "0..1"
+          },
+          "location": {
+            "types": [
+              "location"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          }
+        }
+      },
+      "classified_as": {
+        "kind": "relationship",
+        "roles": {
+          "device": {
+            "types": [
+              "device"
+            ],
+            "count": "1",
+            "per_item": "0..1"
+          },
+          "class": {
+            "types": [
+              "device_class"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          }
+        }
+      },
+      "connection": {
+        "kind": "relationship",
+        "attributes": {
+          "protocol": {
+            "type": "enum",
+            "values": [
+              "zigbee",
+              "thread",
+              "matter",
+              "mqtt",
+              "ble",
+              "rf433",
+              "wifi",
+              "https",
+              "vpn"
+            ],
+            "required": true
+          },
+          "scope": {
+            "type": "enum",
+            "values": [
+              "internal",
+              "external"
+            ],
+            "required": true
+          },
+          "path_note": {
+            "type": "text"
+          }
+        },
+        "roles": {
+          "source": {
+            "types": [
+              "device",
+              "gateway",
+              "broker",
+              "ha_instance",
+              "external_service"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          },
+          "target": {
+            "types": [
+              "ha_instance",
+              "gateway",
+              "broker",
+              "external_service"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          }
+        }
+      },
+      "broker_link": {
+        "kind": "relationship",
+        "roles": {
+          "broker": {
+            "types": [
+              "broker"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          },
+          "publishers": {
+            "types": [
+              "gateway",
+              "device",
+              "ha_instance"
+            ],
+            "count": "1..n",
+            "per_item": "0..n"
+          },
+          "subscribers": {
+            "types": [
+              "ha_instance"
+            ],
+            "count": "1..n",
+            "per_item": "0..n"
+          }
+        }
+      },
+      "realized_by": {
+        "kind": "relationship",
+        "roles": {
+          "realized": {
+            "types": [
+              "connection"
+            ],
+            "count": "1",
+            "per_item": "0..1"
+          },
+          "path": {
+            "types": [
+              "gateway",
+              "broker",
+              "vpn_tunnel",
+              "host",
+              "connection"
+            ],
+            "count": "1..n",
+            "per_item": "0..n",
+            "ordered": true
+          }
+        }
+      },
+      "tunnel_endpoints": {
+        "kind": "relationship",
+        "roles": {
+          "tunnel": {
+            "types": [
+              "vpn_tunnel"
+            ],
+            "count": "1",
+            "per_item": "1"
+          },
+          "locations": {
+            "types": [
+              "location"
+            ],
+            "count": "1..n",
+            "per_item": "0..n"
+          }
+        }
+      }
+    }
+  },
+  "items": [
+    {
+      "id": "loc-main",
+      "type": "location",
+      "attributes": {
+        "name": {
+          "value": "Main house"
+        }
+      }
+    },
+    {
+      "id": "loc-cottage",
+      "type": "location",
+      "attributes": {
+        "name": {
+          "value": "Second site"
+        }
+      }
+    },
+    {
+      "id": "host-hv",
+      "type": "host",
+      "attributes": {
+        "name": {
+          "value": "Virtualization host"
+        },
+        "kind": {
+          "value": "vm_host"
+        }
+      }
+    },
+    {
+      "id": "host-minipc",
+      "type": "host",
+      "attributes": {
+        "name": {
+          "value": "Mini PC"
+        },
+        "kind": {
+          "value": "server"
+        }
+      }
+    },
+    {
+      "id": "hosted-hv",
+      "type": "hosted_at",
+      "roles": {
+        "host": [
+          "host-hv"
+        ],
+        "location": [
+          "loc-main"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "hosted-minipc",
+      "type": "hosted_at",
+      "roles": {
+        "host": [
+          "host-minipc"
+        ],
+        "location": [
+          "loc-main"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "ha-1",
+      "type": "ha_instance",
+      "attributes": {
+        "name": {
+          "value": "Home Assistant 1"
+        },
+        "version": {
+          "value": "2026.11"
+        }
+      }
+    },
+    {
+      "id": "ha-2",
+      "type": "ha_instance",
+      "attributes": {
+        "name": {
+          "value": "Home Assistant 2"
+        },
+        "version": {
+          "value": "2026.10"
+        }
+      }
+    },
+    {
+      "id": "runs-ha-1",
+      "type": "runs_on",
+      "roles": {
+        "guest": [
+          "ha-1"
+        ],
+        "host": [
+          "host-hv"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "runs-ha-2",
+      "type": "runs_on",
+      "roles": {
+        "guest": [
+          "ha-2"
+        ],
+        "host": [
+          "host-minipc"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "serves-ha-1",
+      "type": "serves",
+      "roles": {
+        "instance": [
+          "ha-1"
+        ],
+        "location": [
+          "loc-main"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "serves-ha-2",
+      "type": "serves",
+      "roles": {
+        "instance": [
+          "ha-2"
+        ],
+        "location": [
+          "loc-cottage"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "mqtt-1",
+      "type": "broker",
+      "attributes": {
+        "name": {
+          "value": "MQTT broker"
+        }
+      }
+    },
+    {
+      "id": "runs-mqtt-1",
+      "type": "runs_on",
+      "roles": {
+        "guest": [
+          "mqtt-1"
+        ],
+        "host": [
+          "host-hv"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "vpn-sites",
+      "type": "vpn_tunnel",
+      "attributes": {
+        "name": {
+          "value": "Site-to-site VPN"
+        }
+      }
+    },
+    {
+      "id": "vpn-sites-ends",
+      "type": "tunnel_endpoints",
+      "roles": {
+        "tunnel": [
+          "vpn-sites"
+        ],
+        "locations": [
+          "loc-main",
+          "loc-cottage"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "gw-zigbee",
+      "type": "gateway",
+      "attributes": {
+        "name": {
+          "value": "Zigbee coordinator"
+        },
+        "kind": {
+          "value": "zigbee_coordinator"
+        }
+      }
+    },
+    {
+      "id": "gw-thread",
+      "type": "gateway",
+      "attributes": {
+        "name": {
+          "value": "Thread border router"
+        },
+        "kind": {
+          "value": "thread_border_router"
+        }
+      }
+    },
+    {
+      "id": "gw-rf433",
+      "type": "gateway",
+      "attributes": {
+        "name": {
+          "value": "433 MHz receiver"
+        },
+        "kind": {
+          "value": "rf433_receiver"
+        }
+      }
+    },
+    {
+      "id": "gw-ap",
+      "type": "gateway",
+      "attributes": {
+        "name": {
+          "value": "Wi-Fi access point"
+        },
+        "kind": {
+          "value": "wifi_access_point"
+        }
+      }
+    },
+    {
+      "id": "gw-esp32",
+      "type": "gateway",
+      "attributes": {
+        "name": {
+          "value": "ESP32 Bluetooth proxy"
+        },
+        "kind": {
+          "value": "ble_proxy"
+        }
+      }
+    },
+    {
+      "id": "gw-raspi",
+      "type": "gateway",
+      "attributes": {
+        "name": {
+          "value": "Raspberry Pi 433 MHz bridge"
+        },
+        "kind": {
+          "value": "rf433_bridge"
+        }
+      }
+    },
+    {
+      "id": "at-gw-zigbee",
+      "type": "located_at",
+      "roles": {
+        "thing": [
+          "gw-zigbee"
+        ],
+        "location": [
+          "loc-main"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "at-gw-thread",
+      "type": "located_at",
+      "roles": {
+        "thing": [
+          "gw-thread"
+        ],
+        "location": [
+          "loc-main"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "at-gw-rf433",
+      "type": "located_at",
+      "roles": {
+        "thing": [
+          "gw-rf433"
+        ],
+        "location": [
+          "loc-main"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "at-gw-ap",
+      "type": "located_at",
+      "roles": {
+        "thing": [
+          "gw-ap"
+        ],
+        "location": [
+          "loc-main"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "at-gw-esp32",
+      "type": "located_at",
+      "roles": {
+        "thing": [
+          "gw-esp32"
+        ],
+        "location": [
+          "loc-cottage"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "at-gw-raspi",
+      "type": "located_at",
+      "roles": {
+        "thing": [
+          "gw-raspi"
+        ],
+        "location": [
+          "loc-cottage"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "mqtt-rf433",
+      "type": "broker_link",
+      "roles": {
+        "broker": [
+          "mqtt-1"
+        ],
+        "publishers": [
+          "gw-rf433"
+        ],
+        "subscribers": [
+          "ha-1"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "ext-weather",
+      "type": "external_service",
+      "attributes": {
+        "name": {
+          "value": "Weather service"
+        },
+        "kind": {
+          "value": "weather"
+        }
+      }
+    },
+    {
+      "id": "ext-vendor",
+      "type": "external_service",
+      "attributes": {
+        "name": {
+          "value": "Vendor cloud"
+        },
+        "kind": {
+          "value": "vendor_cloud"
+        }
+      }
+    },
+    {
+      "id": "ext-remote",
+      "type": "external_service",
+      "attributes": {
+        "name": {
+          "value": "Remote access"
+        },
+        "kind": {
+          "value": "remote_access"
+        }
+      }
+    },
+    {
+      "id": "cls-climate",
+      "type": "device_class",
+      "attributes": {
+        "name": {
+          "value": "Climate sensor"
+        }
+      }
+    },
+    {
+      "id": "cls-light",
+      "type": "device_class",
+      "attributes": {
+        "name": {
+          "value": "Light"
+        }
+      }
+    },
+    {
+      "id": "cls-plug",
+      "type": "device_class",
+      "attributes": {
+        "name": {
+          "value": "Plug"
+        }
+      }
+    },
+    {
+      "id": "cls-contact",
+      "type": "device_class",
+      "attributes": {
+        "name": {
+          "value": "Door contact"
+        }
+      }
+    },
+    {
+      "id": "dev-lr-climate",
+      "type": "device",
+      "binding": {
+        "connector": "home-assistant",
+        "id": "sensor.living_room_climate"
+      },
+      "attributes": {
+        "name": {
+          "value": "Living Room Climate",
+          "binding": {
+            "connector": "home-assistant"
+          }
+        },
+        "purchase_date": {
+          "value": "2024-05-10"
+        }
+      }
+    },
+    {
+      "id": "dev-bath-climate",
+      "type": "device",
+      "binding": {
+        "connector": "home-assistant",
+        "id": "sensor.bathroom_climate"
+      },
+      "attributes": {
+        "name": {
+          "value": "Bathroom Climate",
+          "binding": {
+            "connector": "home-assistant"
+          }
+        },
+        "battery": {
+          "value": "empty",
+          "binding": {
+            "connector": "home-assistant"
+          }
+        }
+      }
+    },
+    {
+      "id": "dev-outdoor-climate",
+      "type": "device",
+      "binding": {
+        "connector": "home-assistant",
+        "id": "sensor.outdoor_climate"
+      },
+      "attributes": {
+        "name": {
+          "value": "Outdoor Climate",
+          "binding": {
+            "connector": "home-assistant"
+          }
+        },
+        "battery": {
+          "value": "ok",
+          "binding": {
+            "connector": "home-assistant"
+          }
+        }
+      }
+    },
+    {
+      "id": "dev-kitchen-light",
+      "type": "device",
+      "binding": {
+        "connector": "home-assistant",
+        "id": "light.kitchen"
+      },
+      "attributes": {
+        "name": {
+          "value": "Kitchen Light",
+          "binding": {
+            "connector": "home-assistant"
+          },
+          "pending": {
+            "to_source": {
+              "value": "Kitchen Ceiling Light",
+              "status": "superseded_by_source"
+            },
+            "from_source": {
+              "value": "Kitchen Main Light",
+              "status": "open"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "dev-lr-plug",
+      "type": "device",
+      "binding": {
+        "connector": "home-assistant",
+        "id": "switch.living_room_plug"
+      },
+      "attributes": {
+        "name": {
+          "value": "Living Room Plug",
+          "binding": {
+            "connector": "home-assistant"
+          }
+        },
+        "manufacturer": {
+          "value": "Example Plugs Inc.",
+          "binding": {
+            "connector": "vendor-cloud",
+            "id": "plug-0815"
+          }
+        }
+      }
+    },
+    {
+      "id": "dev-lr-plug-router",
+      "type": "device",
+      "binding": {
+        "connector": "router",
+        "id": "client-17"
+      },
+      "attributes": {
+        "name": {
+          "value": "Living Room Plug",
+          "binding": {
+            "connector": "router"
+          }
+        },
+        "notes": {
+          "value": "Probably the same plug as dev-lr-plug. Not merged yet."
+        }
+      }
+    },
+    {
+      "id": "dev-door",
+      "type": "device",
+      "binding": {
+        "connector": "home-assistant",
+        "id": "binary_sensor.front_door"
+      },
+      "attributes": {
+        "name": {
+          "value": "Front Door Contact",
+          "binding": {
+            "connector": "home-assistant"
+          },
+          "pending": {
+            "from_source": {
+              "value": "Front Door",
+              "status": "open"
+            }
+          }
+        },
+        "battery": {
+          "value": "low",
+          "binding": {
+            "connector": "home-assistant"
+          }
+        }
+      }
+    },
+    {
+      "id": "dev-unknown",
+      "type": "device",
+      "binding": {
+        "connector": "home-assistant",
+        "id": "sensor.zigbee_0x1a2b"
+      },
+      "attributes": {
+        "name": {
+          "value": "Unknown Zigbee Device",
+          "binding": {
+            "connector": "home-assistant"
+          }
+        }
+      }
+    },
+    {
+      "id": "dev-cottage-climate",
+      "type": "device",
+      "binding": {
+        "connector": "home-assistant",
+        "id": "sensor.cottage_climate"
+      },
+      "attributes": {
+        "name": {
+          "value": "Cottage Climate",
+          "binding": {
+            "connector": "home-assistant"
+          }
+        }
+      }
+    },
+    {
+      "id": "dev-cottage-probe",
+      "type": "device",
+      "binding": {
+        "connector": "home-assistant",
+        "id": "sensor.cottage_probe"
+      },
+      "attributes": {
+        "name": {
+          "value": "Cottage Temperature Probe",
+          "binding": {
+            "connector": "home-assistant"
+          }
+        }
+      }
+    },
+    {
+      "id": "dev-cottage-door",
+      "type": "device",
+      "binding": {
+        "connector": "home-assistant",
+        "id": "binary_sensor.cottage_door"
+      },
+      "attributes": {
+        "name": {
+          "value": "Cottage Door Contact",
+          "binding": {
+            "connector": "home-assistant"
+          }
+        }
+      }
+    },
+    {
+      "id": "dev-garage-climate",
+      "type": "device",
+      "binding": {
+        "connector": "home-assistant",
+        "id": "sensor.garage_climate"
+      },
+      "attributes": {
+        "name": {
+          "value": "Garage Climate",
+          "binding": {
+            "connector": "home-assistant"
+          }
+        }
+      }
+    },
+    {
+      "id": "at-lr-climate",
+      "type": "located_at",
+      "roles": {
+        "thing": [
+          "dev-lr-climate"
+        ],
+        "location": [
+          "loc-main"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "at-bath-climate",
+      "type": "located_at",
+      "roles": {
+        "thing": [
+          "dev-bath-climate"
+        ],
+        "location": [
+          "loc-main"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "at-outdoor-climate",
+      "type": "located_at",
+      "roles": {
+        "thing": [
+          "dev-outdoor-climate"
+        ],
+        "location": [
+          "loc-main"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "at-kitchen-light",
+      "type": "located_at",
+      "roles": {
+        "thing": [
+          "dev-kitchen-light"
+        ],
+        "location": [
+          "loc-main"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "at-lr-plug",
+      "type": "located_at",
+      "roles": {
+        "thing": [
+          "dev-lr-plug"
+        ],
+        "location": [
+          "loc-main"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "at-door",
+      "type": "located_at",
+      "roles": {
+        "thing": [
+          "dev-door"
+        ],
+        "location": [
+          "loc-main"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "at-cottage-climate",
+      "type": "located_at",
+      "roles": {
+        "thing": [
+          "dev-cottage-climate"
+        ],
+        "location": [
+          "loc-cottage"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "at-cottage-probe",
+      "type": "located_at",
+      "roles": {
+        "thing": [
+          "dev-cottage-probe"
+        ],
+        "location": [
+          "loc-cottage"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "at-cottage-door",
+      "type": "located_at",
+      "roles": {
+        "thing": [
+          "dev-cottage-door"
+        ],
+        "location": [
+          "loc-cottage"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "at-garage-climate",
+      "type": "located_at",
+      "roles": {
+        "thing": [
+          "dev-garage-climate"
+        ],
+        "location": [
+          "loc-main"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cls-of-lr-climate",
+      "type": "classified_as",
+      "roles": {
+        "device": [
+          "dev-lr-climate"
+        ],
+        "class": [
+          "cls-climate"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cls-of-bath-climate",
+      "type": "classified_as",
+      "roles": {
+        "device": [
+          "dev-bath-climate"
+        ],
+        "class": [
+          "cls-climate"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cls-of-outdoor-climate",
+      "type": "classified_as",
+      "roles": {
+        "device": [
+          "dev-outdoor-climate"
+        ],
+        "class": [
+          "cls-climate"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cls-of-kitchen-light",
+      "type": "classified_as",
+      "roles": {
+        "device": [
+          "dev-kitchen-light"
+        ],
+        "class": [
+          "cls-light"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cls-of-lr-plug",
+      "type": "classified_as",
+      "roles": {
+        "device": [
+          "dev-lr-plug"
+        ],
+        "class": [
+          "cls-plug"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cls-of-door",
+      "type": "classified_as",
+      "roles": {
+        "device": [
+          "dev-door"
+        ],
+        "class": [
+          "cls-contact"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cls-of-cottage-climate",
+      "type": "classified_as",
+      "roles": {
+        "device": [
+          "dev-cottage-climate"
+        ],
+        "class": [
+          "cls-climate"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cls-of-cottage-probe",
+      "type": "classified_as",
+      "roles": {
+        "device": [
+          "dev-cottage-probe"
+        ],
+        "class": [
+          "cls-climate"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cls-of-cottage-door",
+      "type": "classified_as",
+      "roles": {
+        "device": [
+          "dev-cottage-door"
+        ],
+        "class": [
+          "cls-contact"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cls-of-garage-climate",
+      "type": "classified_as",
+      "roles": {
+        "device": [
+          "dev-garage-climate"
+        ],
+        "class": [
+          "cls-climate"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "conn-lr-climate",
+      "type": "connection",
+      "roles": {
+        "source": [
+          "dev-lr-climate"
+        ],
+        "target": [
+          "ha-1"
+        ]
+      },
+      "attributes": {
+        "protocol": {
+          "value": "zigbee"
+        },
+        "scope": {
+          "value": "internal"
+        }
+      }
+    },
+    {
+      "id": "path-lr-climate",
+      "type": "realized_by",
+      "roles": {
+        "realized": [
+          "conn-lr-climate"
+        ],
+        "path": [
+          "gw-zigbee",
+          "host-hv"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "conn-bath-climate",
+      "type": "connection",
+      "roles": {
+        "source": [
+          "dev-bath-climate"
+        ],
+        "target": [
+          "ha-1"
+        ]
+      },
+      "attributes": {
+        "protocol": {
+          "value": "rf433"
+        },
+        "scope": {
+          "value": "internal"
+        }
+      }
+    },
+    {
+      "id": "path-bath-climate",
+      "type": "realized_by",
+      "roles": {
+        "realized": [
+          "conn-bath-climate"
+        ],
+        "path": [
+          "gw-rf433",
+          "mqtt-1"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "conn-outdoor-climate",
+      "type": "connection",
+      "roles": {
+        "source": [
+          "dev-outdoor-climate"
+        ],
+        "target": [
+          "ha-1"
+        ]
+      },
+      "attributes": {
+        "protocol": {
+          "value": "rf433"
+        },
+        "scope": {
+          "value": "internal"
+        }
+      }
+    },
+    {
+      "id": "path-outdoor-climate",
+      "type": "realized_by",
+      "roles": {
+        "realized": [
+          "conn-outdoor-climate"
+        ],
+        "path": [
+          "gw-rf433",
+          "mqtt-1"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "conn-kitchen-light",
+      "type": "connection",
+      "roles": {
+        "source": [
+          "dev-kitchen-light"
+        ],
+        "target": [
+          "ha-1"
+        ]
+      },
+      "attributes": {
+        "protocol": {
+          "value": "matter"
+        },
+        "scope": {
+          "value": "internal"
+        }
+      }
+    },
+    {
+      "id": "path-kitchen-light",
+      "type": "realized_by",
+      "roles": {
+        "realized": [
+          "conn-kitchen-light"
+        ],
+        "path": [
+          "gw-thread"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "conn-lr-plug",
+      "type": "connection",
+      "roles": {
+        "source": [
+          "dev-lr-plug"
+        ],
+        "target": [
+          "ha-1"
+        ]
+      },
+      "attributes": {
+        "protocol": {
+          "value": "wifi"
+        },
+        "scope": {
+          "value": "internal"
+        }
+      }
+    },
+    {
+      "id": "path-lr-plug",
+      "type": "realized_by",
+      "roles": {
+        "realized": [
+          "conn-lr-plug"
+        ],
+        "path": [
+          "gw-ap"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "conn-lr-plug-router",
+      "type": "connection",
+      "roles": {
+        "source": [
+          "dev-lr-plug-router"
+        ],
+        "target": [
+          "gw-ap"
+        ]
+      },
+      "attributes": {
+        "protocol": {
+          "value": "wifi"
+        },
+        "scope": {
+          "value": "internal"
+        }
+      }
+    },
+    {
+      "id": "conn-door",
+      "type": "connection",
+      "roles": {
+        "source": [
+          "dev-door"
+        ],
+        "target": [
+          "ha-1"
+        ]
+      },
+      "attributes": {
+        "protocol": {
+          "value": "zigbee"
+        },
+        "scope": {
+          "value": "internal"
+        }
+      }
+    },
+    {
+      "id": "path-door",
+      "type": "realized_by",
+      "roles": {
+        "realized": [
+          "conn-door"
+        ],
+        "path": [
+          "gw-zigbee",
+          "host-hv"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "conn-unknown",
+      "type": "connection",
+      "roles": {
+        "source": [
+          "dev-unknown"
+        ],
+        "target": [
+          "ha-1"
+        ]
+      },
+      "attributes": {
+        "protocol": {
+          "value": "zigbee"
+        },
+        "scope": {
+          "value": "internal"
+        }
+      }
+    },
+    {
+      "id": "path-unknown",
+      "type": "realized_by",
+      "roles": {
+        "realized": [
+          "conn-unknown"
+        ],
+        "path": [
+          "gw-zigbee",
+          "host-hv"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "conn-cottage-climate",
+      "type": "connection",
+      "roles": {
+        "source": [
+          "dev-cottage-climate"
+        ],
+        "target": [
+          "ha-2"
+        ]
+      },
+      "attributes": {
+        "protocol": {
+          "value": "ble"
+        },
+        "scope": {
+          "value": "internal"
+        }
+      }
+    },
+    {
+      "id": "path-cottage-climate",
+      "type": "realized_by",
+      "roles": {
+        "realized": [
+          "conn-cottage-climate"
+        ],
+        "path": [
+          "gw-esp32",
+          "vpn-sites",
+          "host-minipc"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "conn-cottage-probe",
+      "type": "connection",
+      "roles": {
+        "source": [
+          "dev-cottage-probe"
+        ],
+        "target": [
+          "ha-2"
+        ]
+      },
+      "attributes": {
+        "protocol": {
+          "value": "ble"
+        },
+        "scope": {
+          "value": "internal"
+        }
+      }
+    },
+    {
+      "id": "path-cottage-probe",
+      "type": "realized_by",
+      "roles": {
+        "realized": [
+          "conn-cottage-probe"
+        ],
+        "path": [
+          "gw-esp32",
+          "vpn-sites",
+          "host-minipc"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "conn-cottage-door",
+      "type": "connection",
+      "roles": {
+        "source": [
+          "dev-cottage-door"
+        ],
+        "target": [
+          "ha-2"
+        ]
+      },
+      "attributes": {
+        "protocol": {
+          "value": "rf433"
+        },
+        "scope": {
+          "value": "internal"
+        }
+      }
+    },
+    {
+      "id": "path-cottage-door",
+      "type": "realized_by",
+      "roles": {
+        "realized": [
+          "conn-cottage-door"
+        ],
+        "path": [
+          "gw-raspi",
+          "vpn-sites",
+          "host-minipc"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "conn-garage-climate",
+      "type": "connection",
+      "roles": {
+        "source": [
+          "dev-garage-climate"
+        ],
+        "target": [
+          "ha-2"
+        ]
+      },
+      "attributes": {
+        "protocol": {
+          "value": "ble"
+        },
+        "scope": {
+          "value": "internal"
+        }
+      }
+    },
+    {
+      "id": "path-garage-climate",
+      "type": "realized_by",
+      "roles": {
+        "realized": [
+          "conn-garage-climate"
+        ],
+        "path": [
+          "gw-esp32",
+          "vpn-sites",
+          "host-minipc"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "conn-weather",
+      "type": "connection",
+      "roles": {
+        "source": [
+          "ha-1"
+        ],
+        "target": [
+          "ext-weather"
+        ]
+      },
+      "attributes": {
+        "protocol": {
+          "value": "https"
+        },
+        "scope": {
+          "value": "external"
+        }
+      }
+    },
+    {
+      "id": "conn-vendor",
+      "type": "connection",
+      "roles": {
+        "source": [
+          "ha-1"
+        ],
+        "target": [
+          "ext-vendor"
+        ]
+      },
+      "attributes": {
+        "protocol": {
+          "value": "https"
+        },
+        "scope": {
+          "value": "external"
+        }
+      }
+    },
+    {
+      "id": "conn-remote",
+      "type": "connection",
+      "roles": {
+        "source": [
+          "ext-remote"
+        ],
+        "target": [
+          "ha-1"
+        ]
+      },
+      "attributes": {
+        "protocol": {
+          "value": "vpn"
+        },
+        "scope": {
+          "value": "external"
+        },
+        "path_note": {
+          "value": "Reverse proxy in front of instance 1. Details are not modeled yet."
+        }
+      }
+    }
+  ],
+  "presentation": {
+    "types": {
+      "location": {
+        "label": "Location",
+        "icon": "📍",
+        "title_attribute": "name"
+      },
+      "host": {
+        "label": "Host",
+        "icon": "🖥",
+        "title_attribute": "name",
+        "attribute_order": [
+          "name",
+          "kind"
+        ]
+      },
+      "ha_instance": {
+        "label": "Home Assistant instance",
+        "icon": "🏠",
+        "title_attribute": "name",
+        "attribute_order": [
+          "name",
+          "version"
+        ]
+      },
+      "broker": {
+        "label": "Broker",
+        "icon": "📨",
+        "title_attribute": "name"
+      },
+      "gateway": {
+        "label": "Gateway",
+        "icon": "📡",
+        "title_attribute": "name",
+        "attribute_order": [
+          "name",
+          "kind"
+        ]
+      },
+      "vpn_tunnel": {
+        "label": "VPN tunnel",
+        "icon": "🔒",
+        "title_attribute": "name"
+      },
+      "external_service": {
+        "label": "External service",
+        "icon": "☁",
+        "title_attribute": "name",
+        "attribute_order": [
+          "name",
+          "kind"
+        ]
+      },
+      "device_class": {
+        "label": "Device class",
+        "icon": "🏷",
+        "title_attribute": "name"
+      },
+      "device": {
+        "label": "Device",
+        "icon": "🔌",
+        "title_attribute": "name",
+        "attribute_order": [
+          "name",
+          "battery",
+          "manufacturer",
+          "purchase_date",
+          "notes"
+        ]
+      },
+      "connection": {
+        "label": "Connection",
+        "icon": "↔",
+        "as_edge": true,
+        "edge_label_attribute": "protocol",
+        "attribute_order": [
+          "protocol",
+          "scope",
+          "path_note"
+        ],
+        "drill_down": {
+          "via": "realized_by",
+          "target_role": "realized",
+          "path_role": "path",
+          "note_attribute": "path_note"
+        }
+      },
+      "runs_on": {
+        "label": "runs on",
+        "as_edge": true
+      },
+      "hosted_at": {
+        "label": "hosted at",
+        "as_edge": true
+      },
+      "serves": {
+        "label": "serves",
+        "as_edge": true
+      },
+      "located_at": {
+        "label": "located at",
+        "as_edge": true
+      },
+      "classified_as": {
+        "label": "classified as",
+        "as_edge": true
+      },
+      "broker_link": {
+        "label": "Broker link",
+        "icon": "✳"
+      },
+      "realized_by": {
+        "label": "realized by"
+      },
+      "tunnel_endpoints": {
+        "label": "Tunnel endpoints"
+      }
+    },
+    "views": [
+      {
+        "id": "overview",
+        "label": "Overview by location",
+        "kind": "tree",
+        "root_type": "location",
+        "levels": [
+          {
+            "via": "serves",
+            "from_role": "location",
+            "to_role": "instance"
+          },
+          {
+            "via": "connection",
+            "from_role": "target",
+            "to_role": "source",
+            "group_by": {
+              "via": "classified_as",
+              "from_role": "device",
+              "to_role": "class"
+            }
+          }
+        ]
+      },
+      {
+        "id": "devices",
+        "label": "All devices",
+        "kind": "list",
+        "type": "device"
+      },
+      {
+        "id": "gateways",
+        "label": "All gateways",
+        "kind": "list",
+        "type": "gateway"
+      },
+      {
+        "id": "connections",
+        "label": "All connections",
+        "kind": "list",
+        "type": "connection"
+      }
+    ]
+  }
+}
