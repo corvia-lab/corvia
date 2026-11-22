@@ -108,6 +108,8 @@ def _check_items(model: dict, items: list[dict]) -> list[str]:
                 if target is None:
                     errors.append(f"{where}: role {role!r} references unknown item {player!r}")
                     continue
+                if target.get("sync_status") == "deleted":
+                    errors.append(f"{where}: role {role!r} references deleted item {player!r}")
                 if target["type"] not in role_spec["types"]:
                     errors.append(f"{where}: type {target['type']!r} not allowed in role {role!r}")
                 participation[(it["type"], role, player)] += 1

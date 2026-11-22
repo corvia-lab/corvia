@@ -145,3 +145,20 @@ def test_pending_needs_attribute_binding_even_on_bound_item():
         "pending": {"to_source": {"value": "large", "status": "open"}},
     }
     single_error(f, "pending requires binding")
+
+
+def test_reference_to_deleted_item():
+    f = folder()
+    item(f, "thing-1")["sync_status"] = "deleted"
+    single_error(f, "deleted item")
+
+
+def test_invalid_yaml_date_is_reported(tmp_path):
+    from corvia_tools.validation import validate_folder
+
+    for name in ("model.yaml", "presentation.yaml"):
+        (tmp_path / name).write_bytes((MINIMAL / name).read_bytes())
+    text = (MINIMAL / "items.yaml").read_text(encoding="utf-8").replace("2025-03-01", "2025-02-30")
+    (tmp_path / "items.yaml").write_text(text, encoding="utf-8")
+    errors = validate_folder(tmp_path)
+    assert len(errors) == 1 and "cannot load" in errors[0], errors

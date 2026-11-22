@@ -134,3 +134,15 @@ test("state does not mutate the original bundle", () => {
   markDeleted(s, "t2");
   assert.deepEqual(original, bundle());
 });
+
+test("edit after an open source change stays superseded", () => {
+  const s = createState(bundle());
+  receiveSourceChange(s, "t1", "name", "Theirs");
+  editAttribute(s, "t1", "name", "Mine later");
+  const byKey = Object.fromEntries(listPending(s).map((p) => [p.key, p]));
+  assert.equal(byKey["t1/name/to_source"].status, "superseded_by_source");
+  assert.equal(byKey["t1/name/to_source"].proposed, "discard");
+  const calls = applySync(s, decide(s), new Map());
+  assert.deepEqual(calls, []);
+  assert.equal(item(s, "t1").attributes.name.value, "Theirs");
+});

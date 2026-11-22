@@ -57,6 +57,7 @@ Observed while building the example models (Tasks 3 and 4):
 
 - The D5 rules can be implemented as written: one delta per direction, the last corvia change wins, the source wins on conflicts as a preselected proposal, failed write-backs keep the delta with a message, a successful check removes it.
 - **Delete** needed a rule the design did not state: if the source reports a change for an item that was deleted in corvia, the proposal is to discard the delete (the source wins).
+- **Order of edits matters:** the final review found that an edit in corvia made *after* an open source change re-opened the corvia change, so the check would write corvia's value to the source and then take over the source's value. Fixed: such an edit is marked "superseded by source" at once. The D5 rule "the source wins" therefore applies regardless of which change came first. **Open:** is that what the maintainer wants?
 - **Creating items** is not supported in the prototype (decided in the plan). Open: how does an item created in corvia get its external ID? The connector would have to return it.
 - **Changes to relationships** from a source (e.g. a device that moved) are not covered by attribute deltas. See "Where it needed workarounds".
 - **Assumption:** reviewing pending changes in one table with preselected decisions is understandable. To be judged by the maintainer.

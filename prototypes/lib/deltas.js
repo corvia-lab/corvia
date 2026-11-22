@@ -21,7 +21,9 @@ export function editAttribute(state, itemId, attr, value) {
     return;
   }
   a.pending ??= {};
-  a.pending.to_source = { value, status: "open" }; // last change wins
+  // Last change wins; an open source change still wins over it (design D5).
+  const superseded = a.pending.from_source?.status === "open";
+  a.pending.to_source = { value, status: superseded ? "superseded_by_source" : "open" };
 }
 
 export function receiveSourceChange(state, itemId, attr, value) {
