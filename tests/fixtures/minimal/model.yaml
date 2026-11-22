@@ -1,0 +1,17 @@
+model: minimal
+connectors: [demo]
+types:
+  thing:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+      kind: { type: enum, values: [small, large] }
+      bought: { type: date }
+  link:
+    kind: relationship
+    attributes:
+      note: { type: text }
+    roles:
+      a: { types: [thing], count: "1", per_item: "0..n" }
+      b: { types: [thing], count: "1", per_item: "0..n" }
+    unique: true

@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/corvia-lab/corvia/spec/metamodel/model.schema.json",
+  "title": "corvia concrete model (types)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["model", "types"],
+  "properties": {
+    "model": { "type": "string", "minLength": 1 },
+    "connectors": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+    "types": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "$ref": "#/$defs/type" }
+    }
+  },
+  "$defs": {
+    "attribute": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": { "enum": ["string", "text", "number", "boolean", "date", "enum"] },
+        "required": { "type": "boolean" },
+        "values": { "type": "array", "items": { "type": "string" }, "minItems": 1, "uniqueItems": true }
+      },
+      "if": { "properties": { "type": { "const": "enum" } } },
+      "then": { "required": ["values"] },
+      "else": { "not": { "required": ["values"] } }
+    },
+    "role": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["types", "count", "per_item"],
+      "properties": {
+        "types": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "count": { "enum": ["1", "1..n"] },
+        "per_item": { "enum": ["0..1", "0..n", "1", "1..n"] },
+        "ordered": { "type": "boolean" }
+      }
+    },
+    "type": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": { "enum": ["item", "relationship"] },
+        "attributes": { "type": "object", "additionalProperties": { "$ref": "#/$defs/attribute" } },
+        "roles": { "type": "object", "minProperties": 2, "additionalProperties": { "$ref": "#/$defs/role" } },
+        "unique": { "type": "boolean" }
+      },
+      "if": { "properties": { "kind": { "const": "relationship" } } },
+      "then": { "required": ["roles"] },
+      "else": { "not": { "anyOf": [{ "required": ["roles"] }, { "required": ["unique"] }] } }
+    }
+  }
+}

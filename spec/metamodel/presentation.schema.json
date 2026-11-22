@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/corvia-lab/corvia/spec/metamodel/presentation.schema.json",
+  "title": "corvia presentation layer",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["types"],
+  "properties": {
+    "types": { "type": "object", "additionalProperties": { "$ref": "#/$defs/typePresentation" } },
+    "views": { "type": "array", "items": { "$ref": "#/$defs/view" } }
+  },
+  "$defs": {
+    "hop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["via", "from_role", "to_role"],
+      "properties": {
+        "via": { "type": "string" },
+        "from_role": { "type": "string" },
+        "to_role": { "type": "string" }
+      }
+    },
+    "typePresentation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": { "type": "string" },
+        "icon": { "type": "string" },
+        "title_attribute": { "type": "string" },
+        "attribute_order": { "type": "array", "items": { "type": "string" } },
+        "as_edge": { "type": "boolean" },
+        "edge_label_attribute": { "type": "string" },
+        "drill_down": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["via", "target_role", "path_role"],
+          "properties": {
+            "via": { "type": "string" },
+            "target_role": { "type": "string" },
+            "path_role": { "type": "string" },
+            "note_attribute": { "type": "string" }
+          }
+        }
+      }
+    },
+    "view": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "kind"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "kind": { "enum": ["tree", "list"] },
+        "root_type": { "type": "string" },
+        "type": { "type": "string" },
+        "levels": {
+          "type": "array",
+          "items": {
+            "allOf": [{ "$ref": "#/$defs/hop" }],
+            "properties": {
+              "via": true, "from_role": true, "to_role": true,
+              "group_by": { "$ref": "#/$defs/hop" }
+            },
+            "unevaluatedProperties": false
+          }
+        }
+      },
+      "if": { "properties": { "kind": { "const": "tree" } } },
+      "then": { "required": ["root_type", "levels"] },
+      "else": { "required": ["type"] }
+    }
+  }
+}

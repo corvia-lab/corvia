@@ -1,0 +1,14 @@
+types:
+  thing:
+    label: Thing
+    icon: "●"
+    title_attribute: name
+    attribute_order: [name, kind, bought]
+  link:
+    label: Link
+    as_edge: true
+views:
+  - id: things
+    label: All things
+    kind: list
+    type: thing
