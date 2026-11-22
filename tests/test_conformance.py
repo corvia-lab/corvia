@@ -136,3 +136,12 @@ def test_cli_exit_codes(tmp_path):
     (tmp_path / "items.yaml").write_text("items:\n  - id: x\n    type: ghost\n", encoding="utf-8")
     bad = subprocess.run([sys.executable, "tools/validate.py", str(tmp_path)], cwd=ROOT, capture_output=True, text=True)
     assert bad.returncode == 1 and "unknown type" in bad.stdout
+
+
+def test_pending_needs_attribute_binding_even_on_bound_item():
+    f = folder()
+    item(f, "thing-1")["attributes"]["kind"] = {
+        "value": "small",
+        "pending": {"to_source": {"value": "large", "status": "open"}},
+    }
+    single_error(f, "pending requires binding")

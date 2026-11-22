@@ -79,7 +79,7 @@ def _check_items(model: dict, items: list[dict]) -> list[str]:
             check_binding(attr_where, attr.get("binding"))
             pending = attr.get("pending")
             if pending:
-                if not (attr.get("binding") or it.get("binding")):
+                if not attr.get("binding"):
                     errors.append(f"{attr_where}: pending requires binding")
                 for direction, delta in pending.items():
                     problem = _value_error(attr_specs[name], delta.get("value"))

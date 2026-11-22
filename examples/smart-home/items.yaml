@@ -1,0 +1,196 @@
+# Invented example data. No real hostnames, addresses or personal data.
+items:
+  # --- Locations, hosts, instances -------------------------------------------
+  - { id: loc-main, type: location, attributes: { name: Main house } }
+  - { id: loc-cottage, type: location, attributes: { name: Second site } }
+
+  - { id: host-hv, type: host, attributes: { name: Virtualization host, kind: vm_host } }
+  - { id: host-minipc, type: host, attributes: { name: Mini PC, kind: server } }
+  - { id: hosted-hv, type: hosted_at, roles: { host: [host-hv], location: [loc-main] } }
+  # Case 7: the mini PC is at the main house, but its instance serves the second site.
+  - { id: hosted-minipc, type: hosted_at, roles: { host: [host-minipc], location: [loc-main] } }
+
+  - { id: ha-1, type: ha_instance, attributes: { name: Home Assistant 1, version: "2026.11" } }
+  - { id: ha-2, type: ha_instance, attributes: { name: Home Assistant 2, version: "2026.10" } }
+  - { id: runs-ha-1, type: runs_on, roles: { guest: [ha-1], host: [host-hv] } }
+  - { id: runs-ha-2, type: runs_on, roles: { guest: [ha-2], host: [host-minipc] } }
+  - { id: serves-ha-1, type: serves, roles: { instance: [ha-1], location: [loc-main] } }
+  - { id: serves-ha-2, type: serves, roles: { instance: [ha-2], location: [loc-cottage] } }
+
+  - { id: mqtt-1, type: broker, attributes: { name: MQTT broker } }
+  - { id: runs-mqtt-1, type: runs_on, roles: { guest: [mqtt-1], host: [host-hv] } }
+
+  - { id: vpn-sites, type: vpn_tunnel, attributes: { name: Site-to-site VPN } }
+  - { id: vpn-sites-ends, type: tunnel_endpoints, roles: { tunnel: [vpn-sites], locations: [loc-main, loc-cottage] } }
+
+  # --- Gateways ---------------------------------------------------------------
+  - { id: gw-zigbee, type: gateway, attributes: { name: Zigbee coordinator, kind: zigbee_coordinator } }
+  - { id: gw-thread, type: gateway, attributes: { name: Thread border router, kind: thread_border_router } }
+  - { id: gw-rf433, type: gateway, attributes: { name: 433 MHz receiver, kind: rf433_receiver } }
+  - { id: gw-ap, type: gateway, attributes: { name: Wi-Fi access point, kind: wifi_access_point } }
+  - { id: gw-esp32, type: gateway, attributes: { name: ESP32 Bluetooth proxy, kind: ble_proxy } }
+  - { id: gw-raspi, type: gateway, attributes: { name: Raspberry Pi 433 MHz bridge, kind: rf433_bridge } }
+  - { id: at-gw-zigbee, type: located_at, roles: { thing: [gw-zigbee], location: [loc-main] } }
+  - { id: at-gw-thread, type: located_at, roles: { thing: [gw-thread], location: [loc-main] } }
+  - { id: at-gw-rf433, type: located_at, roles: { thing: [gw-rf433], location: [loc-main] } }
+  - { id: at-gw-ap, type: located_at, roles: { thing: [gw-ap], location: [loc-main] } }
+  - { id: at-gw-esp32, type: located_at, roles: { thing: [gw-esp32], location: [loc-cottage] } }
+  - { id: at-gw-raspi, type: located_at, roles: { thing: [gw-raspi], location: [loc-cottage] } }
+  - { id: mqtt-rf433, type: broker_link, roles: { broker: [mqtt-1], publishers: [gw-rf433], subscribers: [ha-1] } }
+
+  # --- External services ------------------------------------------------------
+  - { id: ext-weather, type: external_service, attributes: { name: Weather service, kind: weather } }
+  - { id: ext-vendor, type: external_service, attributes: { name: Vendor cloud, kind: vendor_cloud } }
+  - { id: ext-remote, type: external_service, attributes: { name: Remote access, kind: remote_access } }
+
+  # --- Device classes -----------------------------------------------------------
+  - { id: cls-climate, type: device_class, attributes: { name: Climate sensor } }
+  - { id: cls-light, type: device_class, attributes: { name: Light } }
+  - { id: cls-plug, type: device_class, attributes: { name: Plug } }
+  - { id: cls-contact, type: device_class, attributes: { name: Door contact } }
+
+  # --- Devices at the main house ------------------------------------------------
+  # Case 4: the name comes from Home Assistant, the purchase date is kept only in corvia.
+  - id: dev-lr-climate
+    type: device
+    binding: { connector: home-assistant, id: sensor.living_room_climate }
+    attributes:
+      name: { value: Living Room Climate, binding: { connector: home-assistant } }
+      purchase_date: 2024-05-10
+  # Case 6: unreachable, empty battery.
+  - id: dev-bath-climate
+    type: device
+    binding: { connector: home-assistant, id: sensor.bathroom_climate }
+    attributes:
+      name: { value: Bathroom Climate, binding: { connector: home-assistant } }
+      battery: { value: empty, binding: { connector: home-assistant } }
+  - id: dev-outdoor-climate
+    type: device
+    binding: { connector: home-assistant, id: sensor.outdoor_climate }
+    attributes:
+      name: { value: Outdoor Climate, binding: { connector: home-assistant } }
+      battery: { value: ok, binding: { connector: home-assistant } }
+  # Case 8: renamed in corvia and in the source at the same time; the source wins.
+  - id: dev-kitchen-light
+    type: device
+    binding: { connector: home-assistant, id: light.kitchen }
+    attributes:
+      name:
+        value: Kitchen Light
+        binding: { connector: home-assistant }
+        pending:
+          to_source: { value: Kitchen Ceiling Light, status: superseded_by_source }
+          from_source: { value: Kitchen Main Light, status: open }
+  - id: dev-lr-plug
+    type: device
+    binding: { connector: home-assistant, id: switch.living_room_plug }
+    attributes:
+      name: { value: Living Room Plug, binding: { connector: home-assistant } }
+      manufacturer: { value: Example Plugs Inc., binding: { connector: vendor-cloud, id: plug-0815 } }
+  # Case 2: the same plug, seen in the router's device list under the same name.
+  # Case 1: no device class.
+  - id: dev-lr-plug-router
+    type: device
+    binding: { connector: router, id: client-17 }
+    attributes:
+      name: { value: Living Room Plug, binding: { connector: router } }
+      notes: Probably the same plug as dev-lr-plug. Not merged yet.
+  - id: dev-door
+    type: device
+    binding: { connector: home-assistant, id: binary_sensor.front_door }
+    attributes:
+      name:
+        value: Front Door Contact
+        binding: { connector: home-assistant }
+        pending:
+          from_source: { value: Front Door, status: open }
+      battery: { value: low, binding: { connector: home-assistant } }
+  # Case 1: no device class.
+  - id: dev-unknown
+    type: device
+    binding: { connector: home-assistant, id: sensor.zigbee_0x1a2b }
+    attributes:
+      name: { value: Unknown Zigbee Device, binding: { connector: home-assistant } }
+
+  # --- Devices at the second site -----------------------------------------------
+  - id: dev-cottage-climate
+    type: device
+    binding: { connector: home-assistant, id: sensor.cottage_climate }
+    attributes:
+      name: { value: Cottage Climate, binding: { connector: home-assistant } }
+  - id: dev-cottage-probe
+    type: device
+    binding: { connector: home-assistant, id: sensor.cottage_probe }
+    attributes:
+      name: { value: Cottage Temperature Probe, binding: { connector: home-assistant } }
+  - id: dev-cottage-door
+    type: device
+    binding: { connector: home-assistant, id: binary_sensor.cottage_door }
+    attributes:
+      name: { value: Cottage Door Contact, binding: { connector: home-assistant } }
+  # Case 3: moved to the second site and now reports to instance 2,
+  # but its location in corvia still says main house.
+  - id: dev-garage-climate
+    type: device
+    binding: { connector: home-assistant, id: sensor.garage_climate }
+    attributes:
+      name: { value: Garage Climate, binding: { connector: home-assistant } }
+
+  # --- Device locations and classes -----------------------------------------
+  - { id: at-lr-climate, type: located_at, roles: { thing: [dev-lr-climate], location: [loc-main] } }
+  - { id: at-bath-climate, type: located_at, roles: { thing: [dev-bath-climate], location: [loc-main] } }
+  - { id: at-outdoor-climate, type: located_at, roles: { thing: [dev-outdoor-climate], location: [loc-main] } }
+  - { id: at-kitchen-light, type: located_at, roles: { thing: [dev-kitchen-light], location: [loc-main] } }
+  - { id: at-lr-plug, type: located_at, roles: { thing: [dev-lr-plug], location: [loc-main] } }
+  - { id: at-door, type: located_at, roles: { thing: [dev-door], location: [loc-main] } }
+  - { id: at-cottage-climate, type: located_at, roles: { thing: [dev-cottage-climate], location: [loc-cottage] } }
+  - { id: at-cottage-probe, type: located_at, roles: { thing: [dev-cottage-probe], location: [loc-cottage] } }
+  - { id: at-cottage-door, type: located_at, roles: { thing: [dev-cottage-door], location: [loc-cottage] } }
+  - { id: at-garage-climate, type: located_at, roles: { thing: [dev-garage-climate], location: [loc-main] } }
+
+  - { id: cls-of-lr-climate, type: classified_as, roles: { device: [dev-lr-climate], class: [cls-climate] } }
+  - { id: cls-of-bath-climate, type: classified_as, roles: { device: [dev-bath-climate], class: [cls-climate] } }
+  - { id: cls-of-outdoor-climate, type: classified_as, roles: { device: [dev-outdoor-climate], class: [cls-climate] } }
+  - { id: cls-of-kitchen-light, type: classified_as, roles: { device: [dev-kitchen-light], class: [cls-light] } }
+  - { id: cls-of-lr-plug, type: classified_as, roles: { device: [dev-lr-plug], class: [cls-plug] } }
+  - { id: cls-of-door, type: classified_as, roles: { device: [dev-door], class: [cls-contact] } }
+  - { id: cls-of-cottage-climate, type: classified_as, roles: { device: [dev-cottage-climate], class: [cls-climate] } }
+  - { id: cls-of-cottage-probe, type: classified_as, roles: { device: [dev-cottage-probe], class: [cls-climate] } }
+  - { id: cls-of-cottage-door, type: classified_as, roles: { device: [dev-cottage-door], class: [cls-contact] } }
+  - { id: cls-of-garage-climate, type: classified_as, roles: { device: [dev-garage-climate], class: [cls-climate] } }
+
+  # --- Logical connections and their technical paths --------------------------
+  - { id: conn-lr-climate, type: connection, attributes: { protocol: zigbee, scope: internal }, roles: { source: [dev-lr-climate], target: [ha-1] } }
+  - { id: path-lr-climate, type: realized_by, roles: { realized: [conn-lr-climate], path: [gw-zigbee, host-hv] } }
+  - { id: conn-bath-climate, type: connection, attributes: { protocol: rf433, scope: internal }, roles: { source: [dev-bath-climate], target: [ha-1] } }
+  - { id: path-bath-climate, type: realized_by, roles: { realized: [conn-bath-climate], path: [gw-rf433, mqtt-1] } }
+  - { id: conn-outdoor-climate, type: connection, attributes: { protocol: rf433, scope: internal }, roles: { source: [dev-outdoor-climate], target: [ha-1] } }
+  - { id: path-outdoor-climate, type: realized_by, roles: { realized: [conn-outdoor-climate], path: [gw-rf433, mqtt-1] } }
+  - { id: conn-kitchen-light, type: connection, attributes: { protocol: matter, scope: internal }, roles: { source: [dev-kitchen-light], target: [ha-1] } }
+  - { id: path-kitchen-light, type: realized_by, roles: { realized: [conn-kitchen-light], path: [gw-thread] } }
+  - { id: conn-lr-plug, type: connection, attributes: { protocol: wifi, scope: internal }, roles: { source: [dev-lr-plug], target: [ha-1] } }
+  - { id: path-lr-plug, type: realized_by, roles: { realized: [conn-lr-plug], path: [gw-ap] } }
+  - { id: conn-lr-plug-router, type: connection, attributes: { protocol: wifi, scope: internal }, roles: { source: [dev-lr-plug-router], target: [gw-ap] } }
+  - { id: conn-door, type: connection, attributes: { protocol: zigbee, scope: internal }, roles: { source: [dev-door], target: [ha-1] } }
+  - { id: path-door, type: realized_by, roles: { realized: [conn-door], path: [gw-zigbee, host-hv] } }
+  - { id: conn-unknown, type: connection, attributes: { protocol: zigbee, scope: internal }, roles: { source: [dev-unknown], target: [ha-1] } }
+  - { id: path-unknown, type: realized_by, roles: { realized: [conn-unknown], path: [gw-zigbee, host-hv] } }
+  - { id: conn-cottage-climate, type: connection, attributes: { protocol: ble, scope: internal }, roles: { source: [dev-cottage-climate], target: [ha-2] } }
+  - { id: path-cottage-climate, type: realized_by, roles: { realized: [conn-cottage-climate], path: [gw-esp32, vpn-sites, host-minipc] } }
+  - { id: conn-cottage-probe, type: connection, attributes: { protocol: ble, scope: internal }, roles: { source: [dev-cottage-probe], target: [ha-2] } }
+  - { id: path-cottage-probe, type: realized_by, roles: { realized: [conn-cottage-probe], path: [gw-esp32, vpn-sites, host-minipc] } }
+  - { id: conn-cottage-door, type: connection, attributes: { protocol: rf433, scope: internal }, roles: { source: [dev-cottage-door], target: [ha-2] } }
+  - { id: path-cottage-door, type: realized_by, roles: { realized: [conn-cottage-door], path: [gw-raspi, vpn-sites, host-minipc] } }
+  - { id: conn-garage-climate, type: connection, attributes: { protocol: ble, scope: internal }, roles: { source: [dev-garage-climate], target: [ha-2] } }
+  - { id: path-garage-climate, type: realized_by, roles: { realized: [conn-garage-climate], path: [gw-esp32, vpn-sites, host-minipc] } }
+
+  - { id: conn-weather, type: connection, attributes: { protocol: https, scope: external }, roles: { source: [ha-1], target: [ext-weather] } }
+  - { id: conn-vendor, type: connection, attributes: { protocol: https, scope: external }, roles: { source: [ha-1], target: [ext-vendor] } }
+  # Case 5: the technical path is only described as text.
+  - id: conn-remote
+    type: connection
+    attributes:
+      protocol: vpn
+      scope: external
+      path_note: Reverse proxy in front of instance 1. Details are not modeled yet.
+    roles: { source: [ext-remote], target: [ha-1] }

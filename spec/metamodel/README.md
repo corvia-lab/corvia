@@ -40,11 +40,11 @@ A relationship type names its roles, for example `source` and `target`. Each rol
 
 ## Binding
 
-An item or a single attribute can be **bound** to a source: `binding: { connector, id }`. The meta-model knows nothing else about the source. Reading and writing it is the connector's job (D4). Unbound items and attributes exist only in corvia. The connectors a model may use are listed in `model.yaml`.
+An item or a single attribute can be **bound** to a source: `binding: { connector, id }`. A binding on the item says that the item comes from that source (and is needed to synchronize a delete). A binding on an attribute says that this attribute is read from and written to the source; its `id` may be left out when it is the item's external ID. Attributes without their own binding are unbound, even on a bound item. The meta-model knows nothing else about the source. Reading and writing it is the connector's job (D4). Unbound items and attributes exist only in corvia. The connectors a model may use are listed in `model.yaml`.
 
 ## Pending changes (deltas)
 
-A bound attribute can carry at most one delta per direction (D5):
+An attribute with its own binding can carry at most one delta per direction (D5):
 
 - `pending.to_source`: a change made in corvia that is waiting to be written to the source.
 - `pending.from_source`: a change reported by the source that is waiting to be taken over.
