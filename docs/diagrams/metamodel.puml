@@ -1,0 +1,125 @@
+@startuml corvia-metamodel
+' The corvia meta-model of stage 1 (design D1-D5). Written by hand.
+' Concrete models (generated): smart-home.puml, enterprise.puml, business-letter.puml
+hide empty members
+skinparam classAttributeIconSize 0
+
+package "Concrete model (model.yaml)" {
+  class Model {
+    model : string
+    connectors : string [*]
+  }
+  abstract class Type {
+    name : string
+  }
+  class ItemType
+  class RelationshipType {
+    unique : boolean
+  }
+  class AttributeDefinition {
+    name : string
+    type : AttributeKind
+    required : boolean
+    values : string [*]
+  }
+  enum AttributeKind {
+    string
+    text
+    number
+    boolean
+    date
+    enum
+  }
+  class Role {
+    name : string
+    count : "1" | "1..n"
+    per_item : "0..1" | "0..n" | "1" | "1..n"
+    ordered : boolean
+  }
+}
+
+package "Items (items.yaml)" {
+  class Item {
+    id : string
+    sync_status : SyncStatus [0..1]
+  }
+  class RoleAssignment {
+    role : string
+  }
+  class AttributeValue {
+    value : scalar
+  }
+  class Binding {
+    connector : string
+    id : string [0..1]
+  }
+  class PendingDelta {
+    direction : to_source | from_source
+    value : scalar
+    status : open | superseded_by_source | failed
+    message : string [0..1]
+  }
+  enum SyncStatus {
+    new
+    deleted
+  }
+}
+
+package "Presentation (presentation.yaml)" {
+  class TypePresentation {
+    label : string
+    icon : string
+    title_attribute : string
+    attribute_order : string [*]
+    as_edge : boolean
+    edge_label_attribute : string
+  }
+  class DrillDown {
+    target_role : string
+    path_role : string
+    note_attribute : string
+  }
+  class View {
+    id : string
+    label : string
+    kind : tree | list
+  }
+  class TreeLevel {
+    from_role : string
+    to_role : string
+    repeat : boolean
+  }
+}
+
+Model *-- "1..*" Type : types
+Type <|-- ItemType
+Type <|-- RelationshipType
+Type *-- "0..*" AttributeDefinition : attributes
+AttributeDefinition ..> AttributeKind
+RelationshipType *-- "2..*" Role : roles
+Role --> "1..*" Type : playable by
+note right of Role
+  A role may be played by a relationship type:
+  a relationship can point to a relationship (D1).
+end note
+
+Item --> "1" Type : type
+Item *-- "0..*" AttributeValue : attributes
+AttributeValue --> "1" AttributeDefinition
+Item *-- "0..*" RoleAssignment : roles\n(relationships only)
+RoleAssignment --> "1" Role
+RoleAssignment --> "1..*" Item : players\n{ordered if role.ordered}
+Item o-- "0..1" Binding : comes from source
+AttributeValue o-- "0..1" Binding : read from / written to source
+AttributeValue *-- "0..2" PendingDelta : pending\n(one per direction)
+Item ..> SyncStatus
+
+TypePresentation --> "1" Type
+TypePresentation *-- "0..1" DrillDown
+DrillDown --> "1" RelationshipType : via
+View --> "0..1" Type : root_type / type
+View *-- "0..*" TreeLevel : levels
+TreeLevel --> "1" RelationshipType : via
+TreeLevel *-- "0..1" TreeLevel : group_by
+
+@enduml

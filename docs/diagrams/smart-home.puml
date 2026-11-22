@@ -1,0 +1,79 @@
+@startuml smart-home
+hide empty members
+skinparam classAttributeIconSize 0
+
+class location {
+  name : string [1]
+}
+class host {
+  name : string [1]
+  kind : enum {server, vm_host, single_board}
+}
+class ha_instance {
+  name : string [1]
+  version : string
+}
+class broker {
+  name : string [1]
+}
+class gateway {
+  name : string [1]
+  kind : enum {zigbee_coordinator, thread_border_router, rf433_receiver, rf433_bridge, ble_proxy, wifi_access_point}
+}
+class vpn_tunnel {
+  name : string [1]
+}
+class external_service {
+  name : string [1]
+  kind : enum {weather, vendor_cloud, remote_access}
+}
+class device_class {
+  name : string [1]
+}
+class device {
+  name : string [1]
+  manufacturer : string
+  battery : enum {ok, low, empty}
+  purchase_date : date
+  notes : text
+}
+class connection <<relationship>> {
+  protocol : enum {zigbee, thread, matter, mqtt, ble, rf433, wifi, https, vpn} [1]
+  scope : enum {internal, external} [1]
+  path_note : text
+}
+class broker_link <<relationship>>
+class realized_by <<relationship>>
+class tunnel_endpoints <<relationship>>
+
+ha_instance "0..*" -- "1" host : runs_on >
+broker "0..*" -- "1" host : runs_on >
+host "0..*" -- "1" location : hosted_at >
+ha_instance "0..*" -- "1..*" location : serves >
+device "0..*" -- "0..1" location : located_at >
+gateway "0..*" -- "0..1" location : located_at >
+device "0..*" -- "0..1" device_class : classified_as >
+connection "0..*" --> "1" device : source
+connection "0..*" --> "1" gateway : source
+connection "0..*" --> "1" broker : source
+connection "0..*" --> "1" ha_instance : source
+connection "0..*" --> "1" external_service : source
+connection "0..*" --> "1" ha_instance : target
+connection "0..*" --> "1" gateway : target
+connection "0..*" --> "1" broker : target
+connection "0..*" --> "1" external_service : target
+broker_link "0..*" --> "1" broker : broker
+broker_link "0..*" --> "1..*" gateway : publishers
+broker_link "0..*" --> "1..*" device : publishers
+broker_link "0..*" --> "1..*" ha_instance : publishers
+broker_link "0..*" --> "1..*" ha_instance : subscribers
+realized_by "0..1" --> "1" connection : realized
+realized_by "0..*" --> "1..*" gateway : path {ordered}
+realized_by "0..*" --> "1..*" broker : path {ordered}
+realized_by "0..*" --> "1..*" vpn_tunnel : path {ordered}
+realized_by "0..*" --> "1..*" host : path {ordered}
+realized_by "0..*" --> "1..*" connection : path {ordered}
+tunnel_endpoints "1" --> "1" vpn_tunnel : tunnel
+tunnel_endpoints "0..*" --> "1..*" location : locations
+
+@enduml

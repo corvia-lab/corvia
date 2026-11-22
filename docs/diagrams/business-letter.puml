@@ -1,0 +1,76 @@
+@startuml business-letter
+hide empty members
+skinparam classAttributeIconSize 0
+
+class business_function {
+  name : string [1]
+}
+class business_letter_group {
+  name : string [1]
+}
+class business_letter {
+  name : string [1]
+  description : text
+}
+class document {
+  name : string [1]
+}
+class document_part {
+  name : string [1]
+}
+class condition {
+  name : string [1]
+  description : text
+  expression : string
+}
+class data_item_group {
+  name : string [1]
+}
+class data_item {
+  name : string [1]
+  data_type : enum {string, number, date, boolean, enum}
+}
+class data_structure {
+  name : string [1]
+}
+class data_structure_type {
+  name : string [1]
+}
+class data_structure_field {
+  name : string [1]
+  data_type : enum {string, number, date, boolean, enum} [1]
+  allowed_values : string
+}
+class datasource {
+  name : string [1]
+}
+class contains_document <<relationship>>
+class contains_part <<relationship>>
+class contains_subpart <<relationship>>
+class has_fields <<relationship>>
+
+business_function "0..*" -- "0..*" business_letter : supports >
+business_letter "1..*" -- "1" business_letter_group : member_of >
+contains_document "0..*" --> "1" business_letter : letter
+contains_document "0..*" --> "1" document : document
+contains_part "0..*" --> "1" document : document
+contains_part "0..*" --> "1" document_part : part
+contains_subpart "0..*" --> "1" document_part : parent
+contains_subpart "0..*" --> "1" document_part : child
+contains_document "0..*" -- "0..1" condition : appears_when >
+contains_part "0..*" -- "0..1" condition : appears_when >
+contains_subpart "0..*" -- "0..1" condition : appears_when >
+data_item "1..*" -- "1" data_item_group : in_group >
+business_letter_group "0..*" -- "0..*" data_item_group : needs_data >
+business_letter_group "0..*" -- "0..*" data_item : needs_data >
+business_letter "0..*" -- "0..*" data_item_group : needs_data >
+business_letter "0..*" -- "0..*" data_item : needs_data >
+business_letter_group "0..*" -- "0..*" data_structure : uses_structure >
+business_letter "0..*" -- "0..*" data_structure : uses_structure >
+data_structure "0..*" -- "1" data_structure_type : typed_as >
+has_fields "0..1" --> "1" data_structure_type : type
+has_fields "1" --> "1..*" data_structure_field : fields {ordered}
+data_item "0..*" -- "0..*" datasource : provided_by >
+data_structure "0..*" -- "0..*" datasource : provided_by >
+
+@enduml

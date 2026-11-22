@@ -306,3 +306,7 @@ Requested by quasipapa after reviewing PR #1.
 ## 13. Relationship direction in the detail view (maintainer feedback, 2026-11-22)
 
 - [x] 13.1 In the detail view, the selected item always stands on the left of a binary relationship; the arrows show the direction (e.g. `Contract letters ← member of ← Welcome letter`). New function `edgeFrom(index, relationship, ownRole) -> { self, others, arrow: "→" | "←", label }` in `prototypes/lib/model.js`, test in `prototypes/tests/model.test.mjs`; node → 41 pass; checked in the browser.
+
+## 14. PlantUML diagrams (maintainer request, 2026-11-23)
+
+- [x] 14.1 `docs/diagrams/metamodel.puml` by hand; `tools/build_diagrams.py` generates `docs/diagrams/<example>.puml` from each `model.yaml` (`tools/corvia_tools/plantuml.py`, tests in `tests/test_plantuml.py`, including a check that committed diagrams are current). pytest → 54 passed. Rendering could not be checked in the agent's environment (no PlantUML available).
