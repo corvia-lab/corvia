@@ -96,12 +96,12 @@ views:
 **Interfaces:**
 - Produces: `load_folder(path: str | Path) -> dict` returning `{"model": dict, "items": list[dict], "presentation": dict}`; `structure_errors(doc: dict, kind: Literal["model","items","presentation"]) -> list[str]` (empty list = valid).
 
-- [ ] 1.1 Write failing tests in `tests/test_structure.py`: `test_minimal_fixture_is_structurally_valid` (all three kinds return `[]`), `test_unknown_top_level_key_is_rejected` (adding `foo: 1` to the model gives one error mentioning `foo`), `test_relationship_without_roles_is_rejected`, `test_enum_without_values_is_rejected`, `test_utf8_names_load` (an item name `"Küche Licht"` loads unchanged).
-- [ ] 1.2 Run `pytest tests/test_structure.py -v`. Expected: FAIL (module not found).
-- [ ] 1.3 Write the three JSON Schemas (draft 2020-12, `additionalProperties: false` everywhere), the minimal fixture (one item type, one binary relationship type, two items, one relationship), `load_folder` (UTF-8, `yaml.safe_load`) and `structure_errors` (`jsonschema.Draft202012Validator`, one message per error with its JSON path).
-- [ ] 1.4 Run `pytest tests/test_structure.py -v`. Expected: 5 passed.
-- [ ] 1.5 Write `spec/metamodel/README.md` (one short section per concept, with a link to the design decision it comes from).
-- [ ] 1.6 Commit: `Add meta-model schemas and structure validation`.
+- [x] 1.1 Write failing tests in `tests/test_structure.py`: `test_minimal_fixture_is_structurally_valid` (all three kinds return `[]`), `test_unknown_top_level_key_is_rejected` (adding `foo: 1` to the model gives one error mentioning `foo`), `test_relationship_without_roles_is_rejected`, `test_enum_without_values_is_rejected`, `test_utf8_names_load` (an item name `"Küche Licht"` loads unchanged).
+- [x] 1.2 Run `pytest tests/test_structure.py -v`. Expected: FAIL (module not found).
+- [x] 1.3 Write the three JSON Schemas (draft 2020-12, `additionalProperties: false` everywhere), the minimal fixture (one item type, one binary relationship type, two items, one relationship), `load_folder` (UTF-8, `yaml.safe_load`) and `structure_errors` (`jsonschema.Draft202012Validator`, one message per error with its JSON path).
+- [x] 1.4 Run `pytest tests/test_structure.py -v`. Expected: 5 passed.
+- [x] 1.5 Write `spec/metamodel/README.md` (one short section per concept, with a link to the design decision it comes from).
+- [x] 1.6 Commit: `Add meta-model schemas and structure validation`.
 
 ## 2. Conformance validator (level 2) and CLI
 
@@ -113,12 +113,12 @@ views:
 - Consumes: `load_folder`, `structure_errors` (Task 1).
 - Produces: `conformance_errors(folder: dict) -> list[str]`; CLI `python tools/validate.py <folder>` prints one error per line, exits `0` when valid and `1` otherwise, and runs level 1 before level 2.
 
-- [ ] 2.1 Write failing tests, one per rule, each asserting exactly one error that contains the quoted fragment:
+- [x] 2.1 Write failing tests, one per rule, each asserting exactly one error that contains the quoted fragment:
   `test_duplicate_item_id` ("duplicate id"), `test_unknown_type` ("unknown type"), `test_unknown_attribute` ("unknown attribute"), `test_missing_required_attribute` ("required"), `test_wrong_value_type` (string attribute with YAML value `no` → "expected string"), `test_enum_value_not_allowed` ("not in enum"), `test_role_player_type_not_allowed` ("not allowed in role"), `test_role_count_violated` (two players in a `count: "1"` role → "count"), `test_per_item_violated` (device in two `per_item: "0..1"` relationships → "per_item"), `test_unique_relationship_duplicate` ("unique"), `test_dangling_reference` ("unknown item"), `test_unknown_connector` ("unknown connector"), `test_pending_on_unbound_attribute` ("pending requires binding"), `test_presentation_unknown_type` ("unknown type"), `test_as_edge_on_non_binary_relationship` ("as_edge requires exactly two roles with count 1"), `test_minimal_fixture_conforms` (`[]`).
-- [ ] 2.2 Run `pytest tests/test_conformance.py -v`. Expected: FAIL.
-- [ ] 2.3 Implement `conformance_errors` and the CLI. A binding counts as present when the item or the attribute has one. Date values must be ISO `YYYY-MM-DD`, given as string or as a YAML date.
-- [ ] 2.4 Run `pytest -v`. Expected: all passed. Run `python tools/validate.py tests/fixtures/minimal`. Expected: exit code 0, no output.
-- [ ] 2.5 Commit: `Add conformance validator and validate CLI`.
+- [x] 2.2 Run `pytest tests/test_conformance.py -v`. Expected: FAIL.
+- [x] 2.3 Implement `conformance_errors` and the CLI. A binding counts as present when the item or the attribute has one. Date values must be ISO `YYYY-MM-DD`, given as string or as a YAML date.
+- [x] 2.4 Run `pytest -v`. Expected: all passed. Run `python tools/validate.py tests/fixtures/minimal`. Expected: exit code 0, no output.
+- [x] 2.5 Commit: `Add conformance validator and validate CLI`.
 
 ## 3. Smart home example model
 
@@ -133,11 +133,11 @@ views:
 - All seven messy cases from the design. Case 7 is `ha_instance` 2: `runs_on` a host that is `hosted_at` location 1 while it `serves` location 2.
 - Presentation: an overview tree `location → (serves) ha_instance → (connection, target role) device`, grouped by `classified_as`; a list view per main type; `connection` with `as_edge: true`, `edge_label_attribute: protocol`, `drill_down` via `realized_by`.
 
-- [ ] 3.1 Write failing tests in `tests/test_examples.py`: `test_smart_home_is_valid` (level 1 and 2 return `[]`), `test_smart_home_has_messy_cases`, one assert per case: a device without `classified_as`; two devices sharing one `name` with different connectors; a moved device, shown as a device `located_at` location 1 but connected to an instance that serves location 2 (stage 1 has no history, so the move shows up as this inconsistency); a device whose `name` is bound and `purchase_date` unbound; a `connection` with `path_note` and no `realized_by`; a device with `battery: empty`; an `ha_instance` whose `serves` location differs from the `hosted_at` location of its host; an item with a pending `from_source` delta that conflicts with a pending `to_source` delta.
-- [ ] 3.2 Run `pytest tests/test_examples.py -v`. Expected: FAIL (folder missing).
-- [ ] 3.3 Write the three YAML files and the README. Aim for 30 to 50 items in total.
-- [ ] 3.4 Run `pytest -v` and `python tools/validate.py examples/smart-home`. Expected: all passed, exit code 0.
-- [ ] 3.5 Commit: `Add smart home example model`.
+- [x] 3.1 Write failing tests in `tests/test_examples.py`: `test_smart_home_is_valid` (level 1 and 2 return `[]`), `test_smart_home_has_messy_cases`, one assert per case: a device without `classified_as`; two devices sharing one `name` with different connectors; a moved device, shown as a device `located_at` location 1 but connected to an instance that serves location 2 (stage 1 has no history, so the move shows up as this inconsistency); a device whose `name` is bound and `purchase_date` unbound; a `connection` with `path_note` and no `realized_by`; a device with `battery: empty`; an `ha_instance` whose `serves` location differs from the `hosted_at` location of its host; an item with a pending `from_source` delta that conflicts with a pending `to_source` delta.
+- [x] 3.2 Run `pytest tests/test_examples.py -v`. Expected: FAIL (folder missing).
+- [x] 3.3 Write the three YAML files and the README. Aim for 30 to 50 items in total.
+- [x] 3.4 Run `pytest -v` and `python tools/validate.py examples/smart-home`. Expected: all passed, exit code 0.
+- [x] 3.5 Commit: `Add smart home example model`.
 
 ## 4. Enterprise control model
 
@@ -147,12 +147,12 @@ views:
 
 **Content:** Item types `business_process`, `application`, `server`, `datacenter`. Relationship types `supported_by` (process → application, with attribute `criticality` enum [low, medium, high]), `runs_on` (application → server), `located_in` (server → datacenter). Connector `ea-tool`. About 10 items, including one application without a server (messy case). Presentation: tree `business_process → application → server`.
 
-- [ ] 4.1 Write failing tests: `test_enterprise_is_valid`, `test_enterprise_chain_exists` (at least one process → application → server → datacenter chain).
-- [ ] 4.2 Run `pytest tests/test_examples.py -v`. Expected: the two new tests FAIL.
-- [ ] 4.3 Write the files.
-- [ ] 4.4 Run `pytest -v` and `python tools/validate.py examples/enterprise`. Expected: all passed, exit code 0.
-- [ ] 4.5 Record in `docs/findings/stage-1-findings.md` (create the file with the headings from Task 10) anything in the enterprise model that the meta-model could not express directly.
-- [ ] 4.6 Commit: `Add enterprise control model`.
+- [x] 4.1 Write failing tests: `test_enterprise_is_valid`, `test_enterprise_chain_exists` (at least one process → application → server → datacenter chain).
+- [x] 4.2 Run `pytest tests/test_examples.py -v`. Expected: the two new tests FAIL.
+- [x] 4.3 Write the files.
+- [x] 4.4 Run `pytest -v` and `python tools/validate.py examples/enterprise`. Expected: all passed, exit code 0.
+- [x] 4.5 Record in `docs/findings/stage-1-findings.md` (create the file with the headings from Task 10) anything in the enterprise model that the meta-model could not express directly.
+- [x] 4.6 Commit: `Add enterprise control model`.
 
 ## 5. JSON bundles for the prototypes
 
@@ -165,11 +165,11 @@ views:
 - Consumes: `load_folder`, `structure_errors`, `conformance_errors`.
 - Produces: `build_bundle(folder_path) -> dict` with keys `model`, `items`, `presentation`. Every attribute is in object form `{"value": ..., "binding"?: ..., "pending"?: ...}`. Dates are ISO strings. Item order is preserved. `python tools/build_bundles.py` writes all bundles from `examples/*`, refuses to write when validation fails (exit 1), and writes JSON with `ensure_ascii=False`, `indent=2`.
 
-- [ ] 5.1 Write failing tests: `test_shorthand_is_normalized`, `test_dates_become_iso_strings`, `test_utf8_survives` ("Küche" stays "Küche" in the written file), `test_invalid_folder_is_refused`, `test_committed_bundles_are_current` (rebuilding equals the committed files).
-- [ ] 5.2 Run `pytest tests/test_bundle.py -v`. Expected: FAIL.
-- [ ] 5.3 Implement and run `python tools/build_bundles.py`.
-- [ ] 5.4 Run `pytest -v`. Expected: all passed.
-- [ ] 5.5 Commit: `Add bundle export for prototypes`.
+- [x] 5.1 Write failing tests: `test_shorthand_is_normalized`, `test_dates_become_iso_strings`, `test_utf8_survives` ("Küche" stays "Küche" in the written file), `test_invalid_folder_is_refused`, `test_committed_bundles_are_current` (rebuilding equals the committed files).
+- [x] 5.2 Run `pytest tests/test_bundle.py -v`. Expected: FAIL.
+- [x] 5.3 Implement and run `python tools/build_bundles.py`.
+- [x] 5.4 Run `pytest -v`. Expected: all passed.
+- [x] 5.5 Commit: `Add bundle export for prototypes`.
 
 ## 6. Model navigation module (`model.js`)
 
@@ -188,11 +188,11 @@ views:
   - `drillDown(index, relationshipId) -> { elements: Array<Item | { missing: string }>, note: string | null }`
   - `buildTree(index, view) -> TreeNode[]` with `TreeNode = { item, children: TreeNode[], groups?: Array<{ label: string, nodes: TreeNode[] }> }`. Items without a group go into the group labeled `"(none)"`.
 
-- [ ] 6.1 Write failing tests: `title uses title_attribute`, `relationsOf finds both directions`, `isEdgeType true for connection, false for broker_link`, `drillDown returns ordered path`, `drillDown returns note when no realized_by exists`, `drillDown stops on a cycle` (inline bundle where A is realized by B and B by A; returns without hanging, each element at most once), `missing player is marked, not thrown` (inline bundle with a dangling ID), `buildTree groups devices by class with (none) group`, `buildTree works for the enterprise bundle without code changes`.
-- [ ] 6.2 Run `node --test prototypes/tests/`. Expected: FAIL.
-- [ ] 6.3 Implement `model.js`. Track visited IDs in `drillDown` and `buildTree`.
-- [ ] 6.4 Run `node --test prototypes/tests/`. Expected: all pass.
-- [ ] 6.5 Commit: `Add model navigation module for prototypes`.
+- [x] 6.1 Write failing tests: `title uses title_attribute`, `relationsOf finds both directions`, `isEdgeType true for connection, false for broker_link`, `drillDown returns ordered path`, `drillDown returns note when no realized_by exists`, `drillDown stops on a cycle` (inline bundle where A is realized by B and B by A; returns without hanging, each element at most once), `missing player is marked, not thrown` (inline bundle with a dangling ID), `buildTree groups devices by class with (none) group`, `buildTree works for the enterprise bundle without code changes`.
+- [x] 6.2 Run `node --test prototypes/tests/`. Expected: FAIL.
+- [x] 6.3 Implement `model.js`. Track visited IDs in `drillDown` and `buildTree`.
+- [x] 6.4 Run `node --test prototypes/tests/`. Expected: all pass.
+- [x] 6.5 Commit: `Add model navigation module for prototypes`.
 
 ## 7. Pending changes module (`deltas.js`)
 
@@ -211,11 +211,11 @@ views:
   - `applySync(state, decisions: Map<string, "accept" | "discard">, results: Map<string, { ok: boolean, message?: string }>) -> OutboundCall[]` with `OutboundCall = { connector, externalId, attribute, value, operation: "update" | "delete" }`. Accepted `from_source`: take over the value and remove both deltas. Accepted `to_source` or delete: emit a call; on `ok` apply it and remove the delta, otherwise set `status: "failed"` with the message. Discarded: remove the delta.
   - Creating items is out of scope for the prototype. Record it as a finding.
 
-- [ ] 7.1 Write failing tests: `edit unbound attribute changes value without delta`, `edit bound attribute twice keeps last value only`, `source change supersedes corvia change`, `listPending proposes source wins`, `accepted source change updates value and clears deltas`, `accepted corvia change emits outbound call`, `failed write-back keeps delta with failed status and message`, `discard removes delta`, `delete of bound item waits for sync`, `delete of unbound item is immediate`, `source change on deleted item proposes discarding the delete`, `state does not mutate the original bundle`.
-- [ ] 7.2 Run `node --test prototypes/tests/`. Expected: the new tests FAIL.
-- [ ] 7.3 Implement `deltas.js`.
-- [ ] 7.4 Run `node --test prototypes/tests/`. Expected: all pass.
-- [ ] 7.5 Commit: `Add pending changes module for prototypes`.
+- [x] 7.1 Write failing tests: `edit unbound attribute changes value without delta`, `edit bound attribute twice keeps last value only`, `source change supersedes corvia change`, `listPending proposes source wins`, `accepted source change updates value and clears deltas`, `accepted corvia change emits outbound call`, `failed write-back keeps delta with failed status and message`, `discard removes delta`, `delete of bound item waits for sync`, `delete of unbound item is immediate`, `source change on deleted item proposes discarding the delete`, `state does not mutate the original bundle`.
+- [x] 7.2 Run `node --test prototypes/tests/`. Expected: the new tests FAIL.
+- [x] 7.3 Implement `deltas.js`.
+- [x] 7.4 Run `node --test prototypes/tests/`. Expected: all pass.
+- [x] 7.5 Commit: `Add pending changes module for prototypes`.
 
 ## 8. Clickable prototype
 
@@ -232,8 +232,8 @@ views:
 - Pending changes: the table from `listPending` with the proposed decision preselected, a per-row toggle for "simulate failure", a "Run check" button that calls `applySync` and shows the outbound calls.
 - A "Simulate source change" action on bound attributes (calls `receiveSourceChange`), so the conflict case can be tried.
 
-- [ ] 8.1 Build the pages.
-- [ ] 8.2 Verify by hand in a browser, checking off each line:
+- [x] 8.1 Build the pages.
+- [x] 8.2 Verify by hand in a browser, checking off each line:
   1. Both models open, and their trees render.
   2. Devices are grouped by class, including "(none)".
   3. The drill-down for a location 2 Bluetooth connection shows the ESP32 → VPN path in order.
@@ -242,23 +242,23 @@ views:
   6. A simulated failure leaves the row with status "failed".
   7. Reloading the page restores the original state.
   8. `grep -nE "ha_instance|device|business_process" prototypes/app.js` returns nothing.
-- [ ] 8.3 Run `node --test prototypes/tests/` and `pytest`. Expected: all pass.
-- [ ] 8.4 Commit: `Add throwaway clickable prototype`.
+- [x] 8.3 Run `node --test prototypes/tests/` and `pytest`. Expected: all pass.
+- [x] 8.4 Commit: `Add throwaway clickable prototype`.
 
 ## 9. Agent entry point check
 
 **Files:**
 - Create: `docs/findings/stage-1-agent-check.md` (questions, the agent's answers, assessment)
 
-- [ ] 9.1 Write five questions into the file, each with the expected answer derived from `examples/smart-home/items.yaml`:
+- [x] 9.1 Write five questions into the file, each with the expected answer derived from `examples/smart-home/items.yaml`:
   1. Which devices are connected to Home Assistant instance 2, grouped by protocol?
   2. Which connector and external ID does device X come from?
   3. Which connections depend on the VPN tunnel?
   4. Where does instance 2 run, and which location does it serve?
   5. Which devices have no device class?
-- [ ] 9.2 Dispatch a fresh subagent that may read only `spec/metamodel/README.md` and `examples/smart-home/`. Give it the questions without the expected answers, and record its answers verbatim.
-- [ ] 9.3 Assess each answer (correct / partly / wrong) and note what in the model helped or got in the way.
-- [ ] 9.4 Commit: `Add agent entry point check`.
+- [x] 9.2 Dispatch a fresh subagent that may read only `spec/metamodel/README.md` and `examples/smart-home/`. Give it the questions without the expected answers, and record its answers verbatim.
+- [x] 9.3 Assess each answer (correct / partly / wrong) and note what in the model helped or got in the way.
+- [x] 9.4 Commit: `Add agent entry point check`.
 
 ## 10. Findings document
 
@@ -267,6 +267,6 @@ views:
 
 **Headings:** Hypothesis and result · What the meta-model could express directly · Where it needed workarounds · Presentation information that turned out to be needed (D3 candidates kept or dropped, and new ones such as `drill_down`) · Editing and synchronization (D5 rules as experienced) · Agent entry point (summary of Task 9) · Cycle time (time per task, from the log) · Open questions for stage 2 · **Decision on stage 2** (left empty for quasipapa)
 
-- [ ] 10.1 Fill every heading except the decision. Separate facts, assumptions and opinions.
+- [x] 10.1 Fill every heading except the decision. Separate facts, assumptions and opinions.
 - [ ] 10.2 Ask quasipapa to evaluate the prototype (Task 8.2 checklist as a starting point) and to write the decision.
-- [ ] 10.3 Commit: `Add stage 1 findings draft`.
+- [x] 10.3 Commit: `Add stage 1 findings draft`.
