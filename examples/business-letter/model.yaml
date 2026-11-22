@@ -1,0 +1,125 @@
+model: business-letter
+connectors: []
+types:
+  business_function:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+  business_letter_group:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+  business_letter:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+      description: { type: text }
+  document:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+  document_part:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+  condition:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+      description: { type: text }
+      expression: { type: string }
+  data_item_group:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+  data_item:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+      data_type: { type: enum, values: [string, number, date, boolean, enum] }
+  data_structure:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+  data_structure_type:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+  data_structure_field:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+      data_type: { type: enum, values: [string, number, date, boolean, enum], required: true }
+      allowed_values: { type: string }
+  datasource:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+
+  supports:
+    kind: relationship
+    roles:
+      function: { types: [business_function], count: "1", per_item: "0..n" }
+      letter: { types: [business_letter], count: "1", per_item: "0..n" }
+    unique: true
+  member_of:
+    kind: relationship
+    roles:
+      letter: { types: [business_letter], count: "1", per_item: "1" }
+      group: { types: [business_letter_group], count: "1", per_item: "1..n" }
+  contains_document:
+    kind: relationship
+    roles:
+      letter: { types: [business_letter], count: "1", per_item: "0..n" }
+      document: { types: [document], count: "1", per_item: "0..n" }
+    unique: true
+  contains_part:
+    kind: relationship
+    roles:
+      document: { types: [document], count: "1", per_item: "0..n" }
+      part: { types: [document_part], count: "1", per_item: "0..n" }
+    unique: true
+  contains_subpart:
+    kind: relationship
+    roles:
+      parent: { types: [document_part], count: "1", per_item: "0..n" }
+      child: { types: [document_part], count: "1", per_item: "0..n" }
+    unique: true
+  appears_when:
+    kind: relationship
+    roles:
+      target: { types: [contains_document, contains_part, contains_subpart], count: "1", per_item: "0..1" }
+      condition: { types: [condition], count: "1", per_item: "0..n" }
+  in_group:
+    kind: relationship
+    roles:
+      item: { types: [data_item], count: "1", per_item: "1" }
+      group: { types: [data_item_group], count: "1", per_item: "1..n" }
+  needs_data:
+    kind: relationship
+    roles:
+      consumer: { types: [business_letter_group, business_letter], count: "1", per_item: "0..n" }
+      data: { types: [data_item_group, data_item], count: "1", per_item: "0..n" }
+    unique: true
+  uses_structure:
+    kind: relationship
+    roles:
+      consumer: { types: [business_letter_group, business_letter], count: "1", per_item: "0..n" }
+      structure: { types: [data_structure], count: "1", per_item: "0..n" }
+    unique: true
+  typed_as:
+    kind: relationship
+    roles:
+      structure: { types: [data_structure], count: "1", per_item: "1" }
+      type: { types: [data_structure_type], count: "1", per_item: "0..n" }
+  has_fields:
+    kind: relationship
+    roles:
+      type: { types: [data_structure_type], count: "1", per_item: "0..1" }
+      fields: { types: [data_structure_field], count: "1..n", per_item: "1", ordered: true }
+  provided_by:
+    kind: relationship
+    roles:
+      data: { types: [data_item, data_structure], count: "1", per_item: "0..n" }
+      source: { types: [datasource], count: "1", per_item: "0..n" }
+    unique: true

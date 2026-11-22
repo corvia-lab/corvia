@@ -1,0 +1,18 @@
+types:
+  business_process: { label: Business process, icon: "⚙", title_attribute: name, attribute_order: [name, owner] }
+  application: { label: Application, icon: "🧩", title_attribute: name, attribute_order: [name, lifecycle] }
+  server: { label: Server, icon: "🖥", title_attribute: name, attribute_order: [name, os] }
+  datacenter: { label: Datacenter, icon: "🏢", title_attribute: name }
+  supported_by: { label: supported by, as_edge: true, edge_label_attribute: criticality }
+  runs_on: { label: runs on, as_edge: true }
+  located_in: { label: located in, as_edge: true }
+views:
+  - id: chain
+    label: Processes to infrastructure
+    kind: tree
+    root_type: business_process
+    levels:
+      - { via: supported_by, from_role: process, to_role: application }
+      - { via: runs_on, from_role: application, to_role: server }
+      - { via: located_in, from_role: server, to_role: datacenter }
+  - { id: applications, label: All applications, kind: list, type: application }

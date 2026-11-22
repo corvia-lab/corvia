@@ -1,0 +1,454 @@
+{
+  "model": {
+    "model": "enterprise",
+    "connectors": [
+      "ea-tool"
+    ],
+    "types": {
+      "business_process": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          },
+          "owner": {
+            "type": "string"
+          }
+        }
+      },
+      "application": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          },
+          "lifecycle": {
+            "type": "enum",
+            "values": [
+              "plan",
+              "active",
+              "phase_out",
+              "retired"
+            ]
+          }
+        }
+      },
+      "server": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          },
+          "os": {
+            "type": "string"
+          }
+        }
+      },
+      "datacenter": {
+        "kind": "item",
+        "attributes": {
+          "name": {
+            "type": "string",
+            "required": true
+          }
+        }
+      },
+      "supported_by": {
+        "kind": "relationship",
+        "attributes": {
+          "criticality": {
+            "type": "enum",
+            "values": [
+              "low",
+              "medium",
+              "high"
+            ]
+          }
+        },
+        "roles": {
+          "process": {
+            "types": [
+              "business_process"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          },
+          "application": {
+            "types": [
+              "application"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          }
+        },
+        "unique": true
+      },
+      "runs_on": {
+        "kind": "relationship",
+        "roles": {
+          "application": {
+            "types": [
+              "application"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          },
+          "server": {
+            "types": [
+              "server"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          }
+        }
+      },
+      "located_in": {
+        "kind": "relationship",
+        "roles": {
+          "server": {
+            "types": [
+              "server"
+            ],
+            "count": "1",
+            "per_item": "0..1"
+          },
+          "datacenter": {
+            "types": [
+              "datacenter"
+            ],
+            "count": "1",
+            "per_item": "0..n"
+          }
+        }
+      }
+    }
+  },
+  "items": [
+    {
+      "id": "proc-order",
+      "type": "business_process",
+      "attributes": {
+        "name": {
+          "value": "Order to cash"
+        },
+        "owner": {
+          "value": "Sales"
+        }
+      }
+    },
+    {
+      "id": "proc-hire",
+      "type": "business_process",
+      "attributes": {
+        "name": {
+          "value": "Hire to retire"
+        },
+        "owner": {
+          "value": "HR"
+        }
+      }
+    },
+    {
+      "id": "app-shop",
+      "type": "application",
+      "binding": {
+        "connector": "ea-tool",
+        "id": "APP-001"
+      },
+      "attributes": {
+        "name": {
+          "value": "Web shop",
+          "binding": {
+            "connector": "ea-tool"
+          }
+        },
+        "lifecycle": {
+          "value": "active",
+          "binding": {
+            "connector": "ea-tool"
+          }
+        }
+      }
+    },
+    {
+      "id": "app-erp",
+      "type": "application",
+      "binding": {
+        "connector": "ea-tool",
+        "id": "APP-002"
+      },
+      "attributes": {
+        "name": {
+          "value": "ERP",
+          "binding": {
+            "connector": "ea-tool"
+          }
+        },
+        "lifecycle": {
+          "value": "active",
+          "binding": {
+            "connector": "ea-tool"
+          }
+        }
+      }
+    },
+    {
+      "id": "app-hr",
+      "type": "application",
+      "binding": {
+        "connector": "ea-tool",
+        "id": "APP-003"
+      },
+      "attributes": {
+        "name": {
+          "value": "HR portal (SaaS)",
+          "binding": {
+            "connector": "ea-tool"
+          }
+        },
+        "lifecycle": {
+          "value": "active",
+          "binding": {
+            "connector": "ea-tool"
+          }
+        }
+      }
+    },
+    {
+      "id": "srv-web",
+      "type": "server",
+      "attributes": {
+        "name": {
+          "value": "Web server 1"
+        },
+        "os": {
+          "value": "Linux"
+        }
+      }
+    },
+    {
+      "id": "srv-db",
+      "type": "server",
+      "attributes": {
+        "name": {
+          "value": "Database server 1"
+        },
+        "os": {
+          "value": "Linux"
+        }
+      }
+    },
+    {
+      "id": "dc-1",
+      "type": "datacenter",
+      "attributes": {
+        "name": {
+          "value": "Datacenter North"
+        }
+      }
+    },
+    {
+      "id": "sup-order-shop",
+      "type": "supported_by",
+      "roles": {
+        "process": [
+          "proc-order"
+        ],
+        "application": [
+          "app-shop"
+        ]
+      },
+      "attributes": {
+        "criticality": {
+          "value": "high"
+        }
+      }
+    },
+    {
+      "id": "sup-order-erp",
+      "type": "supported_by",
+      "roles": {
+        "process": [
+          "proc-order"
+        ],
+        "application": [
+          "app-erp"
+        ]
+      },
+      "attributes": {
+        "criticality": {
+          "value": "high"
+        }
+      }
+    },
+    {
+      "id": "sup-hire-hr",
+      "type": "supported_by",
+      "roles": {
+        "process": [
+          "proc-hire"
+        ],
+        "application": [
+          "app-hr"
+        ]
+      },
+      "attributes": {
+        "criticality": {
+          "value": "medium"
+        }
+      }
+    },
+    {
+      "id": "sup-hire-erp",
+      "type": "supported_by",
+      "roles": {
+        "process": [
+          "proc-hire"
+        ],
+        "application": [
+          "app-erp"
+        ]
+      },
+      "attributes": {
+        "criticality": {
+          "value": "low"
+        }
+      }
+    },
+    {
+      "id": "run-shop",
+      "type": "runs_on",
+      "roles": {
+        "application": [
+          "app-shop"
+        ],
+        "server": [
+          "srv-web"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "run-erp-db",
+      "type": "runs_on",
+      "roles": {
+        "application": [
+          "app-erp"
+        ],
+        "server": [
+          "srv-db"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "in-web",
+      "type": "located_in",
+      "roles": {
+        "server": [
+          "srv-web"
+        ],
+        "datacenter": [
+          "dc-1"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "in-db",
+      "type": "located_in",
+      "roles": {
+        "server": [
+          "srv-db"
+        ],
+        "datacenter": [
+          "dc-1"
+        ]
+      },
+      "attributes": {}
+    }
+  ],
+  "presentation": {
+    "types": {
+      "business_process": {
+        "label": "Business process",
+        "icon": "⚙",
+        "title_attribute": "name",
+        "attribute_order": [
+          "name",
+          "owner"
+        ]
+      },
+      "application": {
+        "label": "Application",
+        "icon": "🧩",
+        "title_attribute": "name",
+        "attribute_order": [
+          "name",
+          "lifecycle"
+        ]
+      },
+      "server": {
+        "label": "Server",
+        "icon": "🖥",
+        "title_attribute": "name",
+        "attribute_order": [
+          "name",
+          "os"
+        ]
+      },
+      "datacenter": {
+        "label": "Datacenter",
+        "icon": "🏢",
+        "title_attribute": "name"
+      },
+      "supported_by": {
+        "label": "supported by",
+        "as_edge": true,
+        "edge_label_attribute": "criticality"
+      },
+      "runs_on": {
+        "label": "runs on",
+        "as_edge": true
+      },
+      "located_in": {
+        "label": "located in",
+        "as_edge": true
+      }
+    },
+    "views": [
+      {
+        "id": "chain",
+        "label": "Processes to infrastructure",
+        "kind": "tree",
+        "root_type": "business_process",
+        "levels": [
+          {
+            "via": "supported_by",
+            "from_role": "process",
+            "to_role": "application"
+          },
+          {
+            "via": "runs_on",
+            "from_role": "application",
+            "to_role": "server"
+          },
+          {
+            "via": "located_in",
+            "from_role": "server",
+            "to_role": "datacenter"
+          }
+        ]
+      },
+      {
+        "id": "applications",
+        "label": "All applications",
+        "kind": "list",
+        "type": "application"
+      }
+    ]
+  }
+}

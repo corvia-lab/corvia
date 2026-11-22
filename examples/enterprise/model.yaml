@@ -1,0 +1,41 @@
+model: enterprise
+connectors: [ea-tool]
+types:
+  business_process:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+      owner: { type: string }
+  application:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+      lifecycle: { type: enum, values: [plan, active, phase_out, retired] }
+  server:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+      os: { type: string }
+  datacenter:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+
+  supported_by:
+    kind: relationship
+    attributes:
+      criticality: { type: enum, values: [low, medium, high] }
+    roles:
+      process: { types: [business_process], count: "1", per_item: "0..n" }
+      application: { types: [application], count: "1", per_item: "0..n" }
+    unique: true
+  runs_on:
+    kind: relationship
+    roles:
+      application: { types: [application], count: "1", per_item: "0..n" }
+      server: { types: [server], count: "1", per_item: "0..n" }
+  located_in:
+    kind: relationship
+    roles:
+      server: { types: [server], count: "1", per_item: "0..1" }
+      datacenter: { types: [datacenter], count: "1", per_item: "0..n" }

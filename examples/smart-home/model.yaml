@@ -1,0 +1,98 @@
+model: smart-home
+connectors: [home-assistant, router, vendor-cloud]
+types:
+  location:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+  host:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+      kind: { type: enum, values: [server, vm_host, single_board] }
+  ha_instance:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+      version: { type: string }
+  broker:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+  gateway:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+      kind: { type: enum, values: [zigbee_coordinator, thread_border_router, rf433_receiver, rf433_bridge, ble_proxy, wifi_access_point] }
+  vpn_tunnel:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+  external_service:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+      kind: { type: enum, values: [weather, vendor_cloud, remote_access] }
+  device_class:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+  device:
+    kind: item
+    attributes:
+      name: { type: string, required: true }
+      manufacturer: { type: string }
+      battery: { type: enum, values: [ok, low, empty] }
+      purchase_date: { type: date }
+      notes: { type: text }
+
+  runs_on:
+    kind: relationship
+    roles:
+      guest: { types: [ha_instance, broker], count: "1", per_item: "1" }
+      host: { types: [host], count: "1", per_item: "0..n" }
+  hosted_at:
+    kind: relationship
+    roles:
+      host: { types: [host], count: "1", per_item: "1" }
+      location: { types: [location], count: "1", per_item: "0..n" }
+  serves:
+    kind: relationship
+    roles:
+      instance: { types: [ha_instance], count: "1", per_item: "1..n" }
+      location: { types: [location], count: "1", per_item: "0..n" }
+  located_at:
+    kind: relationship
+    roles:
+      thing: { types: [device, gateway], count: "1", per_item: "0..1" }
+      location: { types: [location], count: "1", per_item: "0..n" }
+  classified_as:
+    kind: relationship
+    roles:
+      device: { types: [device], count: "1", per_item: "0..1" }
+      class: { types: [device_class], count: "1", per_item: "0..n" }
+  connection:
+    kind: relationship
+    attributes:
+      protocol: { type: enum, values: [zigbee, thread, matter, mqtt, ble, rf433, wifi, https, vpn], required: true }
+      scope: { type: enum, values: [internal, external], required: true }
+      path_note: { type: text }
+    roles:
+      source: { types: [device, gateway, broker, ha_instance, external_service], count: "1", per_item: "0..n" }
+      target: { types: [ha_instance, gateway, broker, external_service], count: "1", per_item: "0..n" }
+  broker_link:
+    kind: relationship
+    roles:
+      broker: { types: [broker], count: "1", per_item: "0..n" }
+      publishers: { types: [gateway, device, ha_instance], count: "1..n", per_item: "0..n" }
+      subscribers: { types: [ha_instance], count: "1..n", per_item: "0..n" }
+  realized_by:
+    kind: relationship
+    roles:
+      realized: { types: [connection], count: "1", per_item: "0..1" }
+      path: { types: [gateway, broker, vpn_tunnel, host, connection], count: "1..n", per_item: "0..n", ordered: true }
+  tunnel_endpoints:
+    kind: relationship
+    roles:
+      tunnel: { types: [vpn_tunnel], count: "1", per_item: "1" }
+      locations: { types: [location], count: "1..n", per_item: "0..n" }

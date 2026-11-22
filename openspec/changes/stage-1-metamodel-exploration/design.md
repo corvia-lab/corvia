@@ -156,6 +156,36 @@ In stage 1, write-back to sources is **simulated**: the prototype shows which ch
 - **Stage 1 ends with a findings document** that records what was learned and the decision on stage 2.
 - **No time box for now.** How long a cycle of modeling, prototyping and evaluation takes is itself part of the exploration and is recorded in the findings.
 
+### D9: Third example "business letter" (decided, 2026-11-22)
+
+**Why:** test whether the meta-model can express the relationships of a real business domain of quasipapa's, especially conditions on relationships and type definitions as items. Volumes do not matter for this test (decided).
+
+**Volumes from practice** (for the later UI, not for the prototype): about 500 business letters, 200 business functions, 8,000 data items, 200 data structures, 200 data sources, 800,000 relationships between letters (or letter groups) and data items (or data item groups), at most about 2,000 data items per letter.
+
+**Model** (small invented data set, about five letters):
+
+- Item types: `business_function`, `business_letter_group`, `business_letter`, `document`, `document_part`, `condition` (name, description as Markdown, expression), `data_item_group`, `data_item`, `data_structure`, `data_structure_type`, `data_structure_field` (name, data type, allowed values), `datasource`.
+- Relationships:
+  - business function ↔ letter (n..m)
+  - letter → letter group (each letter in exactly one group; a group has at least one letter)
+  - letter ↔ document, document ↔ part, part ↔ part (n..m)
+  - `appears_when`: points to one of these three "contains" relationships and to a condition. At most one condition per relationship; a condition can be reused.
+  - data item → data item group (exactly one group)
+  - letter group or letter ↔ data item group or data item (n..m)
+  - letter group or letter ↔ data structure (n..m)
+  - data structure → data structure type (n..1)
+  - data structure type → fields (ordered). Fields are scalar; there are no structures inside structures.
+  - data item ↔ data source and data structure ↔ data source (n..m)
+
+**Decisions for the test, deliberately different from the expected practice** (decided):
+
+| Topic | For the test | Expected in practice | Why the test variant |
+|---|---|---|---|
+| Condition | Its own reusable item, attached to the relationship (relationship → relationship) | An attribute on the relationship | Tests D1 in a business domain |
+| Structure type fields | Each field is an item with name and data type | The definition as text on the type | Shows whether type definitions can be modeled as ordinary items |
+
+**Prototype:** a tree view letter group → letter → document → part → part. Parts can be nested to any depth, so a tree level can be marked as **repeating** (`repeat: true`, agent's call). This is a small, generic extension of the presentation layer. List views per type use the existing table.
+
 ## Risks / Trade-offs
 
 - **The generic model is harder to use than a specific one.** Mitigation: the prototypes test exactly this, and the presentation layer is where usability is added.

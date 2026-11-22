@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/corvia-lab/corvia/spec/metamodel/items.schema.json",
+  "title": "corvia items (instances of a concrete model)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["items"],
+  "properties": {
+    "items": { "type": "array", "items": { "$ref": "#/$defs/item" } }
+  },
+  "$defs": {
+    "scalar": { "type": ["string", "number", "boolean", "null"] },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["connector"],
+      "properties": {
+        "connector": { "type": "string", "minLength": 1 },
+        "id": { "type": "string", "minLength": 1 }
+      }
+    },
+    "delta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value", "status"],
+      "properties": {
+        "value": { "$ref": "#/$defs/scalar" },
+        "status": { "enum": ["open", "superseded_by_source", "failed"] },
+        "message": { "type": "string" }
+      }
+    },
+    "attributeObject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["value"],
+      "properties": {
+        "value": { "$ref": "#/$defs/scalar" },
+        "binding": { "$ref": "#/$defs/binding" },
+        "pending": {
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "properties": {
+            "to_source": { "$ref": "#/$defs/delta" },
+            "from_source": { "$ref": "#/$defs/delta" }
+          }
+        }
+      }
+    },
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]*$" },
+        "type": { "type": "string", "minLength": 1 },
+        "binding": { "$ref": "#/$defs/binding" },
+        "sync_status": { "enum": ["new", "deleted"] },
+        "attributes": {
+          "type": "object",
+          "additionalProperties": {
+            "oneOf": [{ "$ref": "#/$defs/scalar" }, { "$ref": "#/$defs/attributeObject" }]
+          }
+        },
+        "roles": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+        }
+      }
+    }
+  }
+}

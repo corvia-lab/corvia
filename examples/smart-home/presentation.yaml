@@ -1,0 +1,43 @@
+types:
+  location: { label: Location, icon: "📍", title_attribute: name }
+  host: { label: Host, icon: "🖥", title_attribute: name, attribute_order: [name, kind] }
+  ha_instance: { label: Home Assistant instance, icon: "🏠", title_attribute: name, attribute_order: [name, version] }
+  broker: { label: Broker, icon: "📨", title_attribute: name }
+  gateway: { label: Gateway, icon: "📡", title_attribute: name, attribute_order: [name, kind] }
+  vpn_tunnel: { label: VPN tunnel, icon: "🔒", title_attribute: name }
+  external_service: { label: External service, icon: "☁", title_attribute: name, attribute_order: [name, kind] }
+  device_class: { label: Device class, icon: "🏷", title_attribute: name }
+  device:
+    label: Device
+    icon: "🔌"
+    title_attribute: name
+    attribute_order: [name, battery, manufacturer, purchase_date, notes]
+  connection:
+    label: Connection
+    icon: "↔"
+    as_edge: true
+    edge_label_attribute: protocol
+    attribute_order: [protocol, scope, path_note]
+    drill_down: { via: realized_by, target_role: realized, path_role: path, note_attribute: path_note }
+  runs_on: { label: runs on, as_edge: true }
+  hosted_at: { label: hosted at, as_edge: true }
+  serves: { label: serves, as_edge: true }
+  located_at: { label: located at, as_edge: true }
+  classified_as: { label: classified as, as_edge: true }
+  broker_link: { label: Broker link, icon: "✳" }
+  realized_by: { label: realized by }
+  tunnel_endpoints: { label: Tunnel endpoints }
+views:
+  - id: overview
+    label: Overview by location
+    kind: tree
+    root_type: location
+    levels:
+      - { via: serves, from_role: location, to_role: instance }
+      - via: connection
+        from_role: target
+        to_role: source
+        group_by: { via: classified_as, from_role: device, to_role: class }
+  - { id: devices, label: All devices, kind: list, type: device }
+  - { id: gateways, label: All gateways, kind: list, type: gateway }
+  - { id: connections, label: All connections, kind: list, type: connection }

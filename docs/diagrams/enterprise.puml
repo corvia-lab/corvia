@@ -1,0 +1,29 @@
+@startuml enterprise
+hide empty members
+skinparam classAttributeIconSize 0
+
+class business_process {
+  name : string [1]
+  owner : string
+}
+class application {
+  name : string [1]
+  lifecycle : enum {plan, active, phase_out, retired}
+}
+class server {
+  name : string [1]
+  os : string
+}
+class datacenter {
+  name : string [1]
+}
+class supported_by <<relationship>> {
+  criticality : enum {low, medium, high}
+}
+
+supported_by "0..*" --> "1" business_process : process
+supported_by "0..*" --> "1" application : application
+application "0..*" -- "0..*" server : runs_on >
+server "0..*" -- "0..1" datacenter : located_in >
+
+@enduml

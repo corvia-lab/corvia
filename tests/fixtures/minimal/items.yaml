@@ -1,0 +1,17 @@
+items:
+  - id: thing-1
+    type: thing
+    binding: { connector: demo, id: "ext-1" }
+    attributes:
+      name: Lamp
+      kind: small
+      bought: 2025-03-01
+  - id: thing-2
+    type: thing
+    attributes:
+      name: { value: Switch, binding: { connector: demo, id: "ext-2" } }
+  - id: link-1
+    type: link
+    roles:
+      a: [thing-1]
+      b: [thing-2]
