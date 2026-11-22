@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use or refer to corvia in your work, please cite it as below."
+title: "corvia"
+abstract: >-
+  The core of your metadata, the way to better decisions.
+  A research, exploration and experimentation project on collecting,
+  relating, versioning, curating and synchronizing metadata from many
+  sources, and on how Business, IT and AI can work together in one project.
+type: software
+authors:
+  - alias: quasipapa
+  - alias: gp
+repository-code: "https://github.com/corvia-lab/corvia"
+license: Apache-2.0
+keywords:
+  - metadata
+  - metadata-management
+  - versioning
+  - synchronization
+  - ai-assisted-development
+  - research
