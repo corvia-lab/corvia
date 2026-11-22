@@ -921,6 +921,58 @@
       "attributes": {}
     },
     {
+      "id": "cp-summary-address",
+      "type": "contains_part",
+      "roles": {
+        "document": [
+          "doc-summary"
+        ],
+        "part": [
+          "part-address"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cp-terms-address",
+      "type": "contains_part",
+      "roles": {
+        "document": [
+          "doc-terms"
+        ],
+        "part": [
+          "part-address"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cp-invoice-address",
+      "type": "contains_part",
+      "roles": {
+        "document": [
+          "doc-invoice"
+        ],
+        "part": [
+          "part-address"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "id": "cp-sepa-address",
+      "type": "contains_part",
+      "roles": {
+        "document": [
+          "doc-sepa"
+        ],
+        "part": [
+          "part-address"
+        ]
+      },
+      "attributes": {}
+    },
+    {
       "id": "cp-cover-signature",
       "type": "contains_part",
       "roles": {

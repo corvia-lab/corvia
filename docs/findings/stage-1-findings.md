@@ -114,6 +114,7 @@ Agent working time per task, from commit times (approximate, **fact**). Human re
 5. **Presentation:** type filters per tree level; is a graph view needed?
 6. **Agent support:** a reverse index and a place for known gaps; later an API or MCP server.
 7. **Creating items** in corvia that belong to a source.
+8. **Transitive connections** (decided to look at separately and in more depth): e.g. "in which letters is this document part used", across documents and parent parts. This is an evaluation along relationships and matters especially at the volumes of the business letter domain.
 8. **Technology** for stage 2: the prototype decided none.
 
 ## Decision on stage 2

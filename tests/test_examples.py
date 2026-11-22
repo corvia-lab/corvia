@@ -155,3 +155,9 @@ def test_letter_groups_and_letters_both_consume_data(letters):
     data = {by_id[players(r, "data")[0]]["type"] for r in needs}
     assert consumers == {"business_letter_group", "business_letter"}
     assert data == {"data_item_group", "data_item"}
+
+
+def test_address_block_is_used_in_every_document(letters):
+    documents = {i["id"] for i in letters if i["type"] == "document"}
+    with_address = {players(r, "document")[0] for r in rels(letters, "contains_part") if players(r, "part")[0] == "part-address"}
+    assert with_address == documents

@@ -62,6 +62,10 @@ items:
 
   - { id: cp-cover-address, type: contains_part, roles: { document: [doc-cover], part: [part-address] } }
   - { id: cp-cover-salutation, type: contains_part, roles: { document: [doc-cover], part: [part-salutation] } }
+  - { id: cp-summary-address, type: contains_part, roles: { document: [doc-summary], part: [part-address] } }
+  - { id: cp-terms-address, type: contains_part, roles: { document: [doc-terms], part: [part-address] } }
+  - { id: cp-invoice-address, type: contains_part, roles: { document: [doc-invoice], part: [part-address] } }
+  - { id: cp-sepa-address, type: contains_part, roles: { document: [doc-sepa], part: [part-address] } }
   - { id: cp-cover-signature, type: contains_part, roles: { document: [doc-cover], part: [part-signature] } }
   - { id: cp-summary-tariff, type: contains_part, roles: { document: [doc-summary], part: [part-tariff-table] } }
   - { id: cp-terms-legal, type: contains_part, roles: { document: [doc-terms], part: [part-legal-notice] } }
