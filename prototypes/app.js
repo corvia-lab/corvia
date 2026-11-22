@@ -1,6 +1,6 @@
 // Throwaway stage 1 prototype. Everything specific to a model comes from the bundle:
 // no type names may appear in this file (checked in tasks.md, step 8.2).
-import { indexBundle, title, relationsOf, otherPlayers, isEdgeType, drillDown, buildTree } from "./lib/model.js";
+import { indexBundle, title, relationsOf, otherPlayers, isEdgeType, drillDown, buildTree, edgeFrom } from "./lib/model.js";
 import { createState, editAttribute, receiveSourceChange, markDeleted, listPending, applySync } from "./lib/deltas.js";
 import { listColumns, cellText, filterRows, sortRows } from "./lib/table.js";
 import { renderMarkdown } from "./lib/markdown.js";
@@ -171,12 +171,10 @@ function relationshipLine(rel, ownRole) {
   const roles = Object.keys(app.bundle.model.types[rel.type].roles);
   const open = el("button", { onclick: () => select(rel.id) }, "open");
   if (isEdgeType(app.index, rel.type)) {
-    const [first, second] = roles;
-    const labelAttr = typeInfo(rel.type).edge_label_attribute;
-    const label = labelAttr ? rel.attributes?.[labelAttr]?.value : null;
-    const from = otherPlayers(app.index, rel, first)[0];
-    const to = otherPlayers(app.index, rel, second)[0];
-    return el("li", {}, nodeLink(from), ` → ${typeLabel(rel.type)}${label ? ` · ${label}` : ""} → `, nodeLink(to), " ", open);
+    // The selected item always stands on the left; the arrows show the direction.
+    const e = edgeFrom(app.index, rel, ownRole);
+    const middle = `${e.arrow} ${typeLabel(rel.type)}${e.label ? ` · ${e.label}` : ""} ${e.arrow}`;
+    return el("li", {}, nodeLink(e.self), ` ${middle} `, e.others.map((o) => [nodeLink(o), " "]), open);
   }
   return el("li", {}, `${icon(rel.type)} ${typeLabel(rel.type)} (as ${ownRole}) `, open,
     el("ul", {}, roles.map((r) => el("li", {}, `${r}: `, otherPlayers(app.index, rel, r).map((p) => [nodeLink(p), " "])))));

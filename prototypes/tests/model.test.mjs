@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
-  indexBundle, title, relationsOf, otherPlayers, isEdgeType, drillDown, buildTree,
+  indexBundle, title, relationsOf, otherPlayers, isEdgeType, drillDown, buildTree, edgeFrom,
 } from "../lib/model.js";
 
 const load = (name) => JSON.parse(readFileSync(new URL(`../data/${name}.json`, import.meta.url), "utf-8"));
@@ -128,4 +128,19 @@ test("a relationship without title attribute gets a title from its players", () 
   const letters = indexBundle(load("business-letter"));
   assert.equal(title(letters, letters.byId.get("cd-welcome-sepa")), "Welcome letter → SEPA direct debit mandate");
   assert.equal(title(letters, letters.byId.get("hf-partner")), "partner → type, name, first_name, birth_date");
+});
+
+test("edgeFrom puts the current item on the left, whatever the direction", () => {
+  const letters = indexBundle(load("business-letter"));
+  const mem = letters.byId.get("mem-welcome");
+  const fromGroup = edgeFrom(letters, mem, "group");
+  assert.equal(fromGroup.self.id, "grp-contract");
+  assert.equal(fromGroup.arrow, "←");
+  assert.deepEqual(fromGroup.others.map((o) => o.id), ["let-welcome"]);
+  const fromLetter = edgeFrom(letters, mem, "letter");
+  assert.equal(fromLetter.self.id, "let-welcome");
+  assert.equal(fromLetter.arrow, "→");
+  assert.deepEqual(fromLetter.others.map((o) => o.id), ["grp-contract"]);
+  const conn = edgeFrom(home, home.byId.get("conn-cottage-climate"), "target");
+  assert.equal(conn.label, "ble");
 });

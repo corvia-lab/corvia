@@ -120,3 +120,17 @@ export function buildTree(index, view) {
   };
   return (index.byType.get(view.root_type) ?? []).map((root) => build(root, 0, new Set([root.id])));
 }
+
+// A binary relationship seen from one of its players: that player first,
+// the arrow pointing along the relationship's direction (first role → second role).
+export function edgeFrom(index, relationship, ownRole) {
+  const roles = Object.keys(index.bundle.model.types[relationship.type].roles);
+  const otherRole = roles.find((r) => r !== ownRole);
+  const labelAttr = typePresentation(index, relationship.type).edge_label_attribute;
+  return {
+    self: otherPlayers(index, relationship, ownRole)[0],
+    others: otherPlayers(index, relationship, otherRole),
+    arrow: ownRole === roles[0] ? "→" : "←",
+    label: labelAttr ? relationship.attributes?.[labelAttr]?.value ?? null : null,
+  };
+}

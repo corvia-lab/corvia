@@ -302,3 +302,7 @@ Requested by quasipapa after reviewing PR #1.
 - [x] 12.2 Model, data and presentation as in D9.
 - [x] 12.3 `python tools/build_bundles.py`; pytest → 47 passed; node → 40 pass; browser check: tree, condition on relationship, conditions list, no console errors.
 - [x] 12.4 Findings updated, including the UI fine-tuning the maintainer deferred.
+
+## 13. Relationship direction in the detail view (maintainer feedback, 2026-11-22)
+
+- [x] 13.1 In the detail view, the selected item always stands on the left of a binary relationship; the arrows show the direction (e.g. `Contract letters ← member of ← Welcome letter`). New function `edgeFrom(index, relationship, ownRole) -> { self, others, arrow: "→" | "←", label }` in `prototypes/lib/model.js`, test in `prototypes/tests/model.test.mjs`; node → 41 pass; checked in the browser.
