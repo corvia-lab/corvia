@@ -48,6 +48,7 @@ The whole kickoff took place in **one chat session of about five hours** (12:39â
 - **Efficient naming:** The names came out of a discussion with the agent, including checks for conflicts with existing products, organizations and repositories.
 - **Documentation "on the fly":** The documentation grows while we work, because the agent summarizes as it goes.
 - **Fluid working with parallel threads:** This allows parallel threads in thinking and doing. The agent's summaries *still* produce a structured overall picture.
+- **Working from a tablet:** Most of the human work was done on a tablet, while the agent had direct access to the repository. It researched, wrote and committed, and the human steered, reviewed and decided. This way of working felt very efficient.
 - **Context knowledge on demand:** Topics such as citations, authorship and license choice are background knowledge that can be retrieved and researched efficiently through an agent. That covers both the *content* and how to *implement it technically* (e.g. `NOTICE`, `CITATION.cff`).
 
 ### 2.2 What stays with the humans
@@ -60,4 +61,5 @@ The whole kickoff took place in **one chat session of about five hours** (12:39â
 - **Checks for name conflicts are only indicative.** Web searches often return similar rather than exact names. Some sources (GitHub API, GitHub pages) could not be queried because of rate limits. Trademark registers cannot be searched reliably this way.
 - **Setting up access took several rounds.** Before the agent could write to the repository, a few setup steps were needed on the human side. Each missing step only showed up during the next attempt.
 - **Some results can only be verified by humans.** For example, the agent could not see how GitHub renders `CITATION.cff`. quasipapa reported the APA display back, and the agent adjusted the file, without success, then reverted. Remaining issue: the APA view shows "quasipapa, & gp." until full names are added.
+- **The setup may not carry over to companies.** This project is public and run privately, so giving an agent direct write access to the repository was easy to justify. In a real company context, especially with higher requirements for data protection and security, other or stricter policies may apply and must be followed. Examples: which agents may access which repositories and data, whether agents may push or only open pull requests, and where data may be processed.
 - **Separating fact, assumption and opinion helps.** The agent marked which statements were verified, which were assumptions and which were recommendations. That made the human decisions easier.
