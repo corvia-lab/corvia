@@ -8,8 +8,8 @@ abstract: >-
   sources, and on how Business, IT and AI can work together in one project.
 type: software
 authors:
-  - alias: quasipapa
-  - alias: gp
+  - name: quasipapa
+  - name: gp
 repository-code: "https://github.com/corvia-lab/corvia"
 license: Apache-2.0
 keywords:
