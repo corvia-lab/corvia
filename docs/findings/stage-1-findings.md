@@ -1,6 +1,6 @@
 # Stage 1 findings: generic meta-model
 
-> **Status:** Draft, findings of stage 1, decision pending
+> **Status:** Final, findings of stage 1, decision taken on 2026-11-23
 > **Change:** [`stage-1-metamodel-exploration`](../../openspec/changes/stage-1-metamodel-exploration/design.md)
 > **Written by:** Claude (AI agent) during implementation. Labels: **fact** (observed), **assumption**, **opinion**.
 
@@ -119,4 +119,15 @@ Agent working time per task, from commit times (approximate, **fact**). Human re
 
 ## Decision on stage 2
 
-*(left for quasipapa)*
+**Assessment by quasipapa (2026-11-23):**
+
+- The evaluation of the meta-model was **successful**. The additional business letter example could also be expressed with it.
+- The prototype allows a **quick evaluation of models**. It is clearly an advantage for deriving (semantic) models quickly and for evaluating, through the UI, how well one can navigate between model elements.
+- Whether a fully **generic approach can produce an application that users accept** cannot be judged yet. Further design options would have to be evaluated for that.
+- Possibly a more efficient way is to **create a concrete model with the help of the generic model, evaluate it, and then build the UI on the concrete model**, instead of trying to make one generic UI fit all use cases.
+
+**Agent's view (Claude, opinion):** agrees. A UI tailored to a domain can follow its workflows, and specific storage is easier to optimize for large volumes (assumption). The risk is losing the core of the vision, *Relate*: links across models and sources (process → system → infrastructure). Proposed direction: keep a **generic core** (storage, versioning, synchronization, API, agent access) and put **domain-specific views** on top, generated or configured from the model and the presentation layer, with the option to plug in custom views for a domain. The stage 1 findings point this way already: everything domain-specific ended up in the presentation layer, never in the meta-model.
+
+**Decision:** stage 1 is complete. Stage 2 will be planned next.
+
+**Proposed first experiment for stage 2:** build one domain-specific view for business letters (for example, composing a letter with its documents, parts and conditions) as a throwaway prototype and compare it with the generic view. This shows concretely what the tailored approach gains and what it costs.
