@@ -1,0 +1,88 @@
+# Render the PlantUML diagrams in docs/diagrams/ to SVG, so GitHub can show them.
+# See docs/diagrams/README.md ("Decision: keep PlantUML, render SVGs in CI").
+#
+# On a pull request from this repository, changed SVGs are committed back to the
+# pull request branch. On a pull request from a fork, the job only checks and fails
+# if the SVGs are out of date. The bot commit does not loop: GitHub holds the
+# run it would start as "action required" (observed on 2026-11-26), and if that
+# run is approved, the SVGs are unchanged and nothing is committed.
+
+name: Diagrams
+
+on:
+  pull_request:
+    paths:
+      - "docs/diagrams/*.puml"
+      - ".github/workflows/diagrams.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: diagrams-${{ github.head_ref }}
+  cancel-in-progress: true
+
+env:
+  PLANTUML_VERSION: "1.2026.10"
+  # SHA-256 of plantuml-1.2026.10.jar from the GitHub release, computed by the agent
+  # on download (the release page publishes no checksum). Update both values together.
+  PLANTUML_SHA256: "e9bc9e6b2eb715e8c0c929f3dcb5fc1923be13f37599b09c293c66d354e88686"
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the pull request branch
+        uses: actions/checkout@v6
+        with:
+          # On a pull request, check out the branch itself (not the merge commit),
+          # so rendered files can be pushed back to it.
+          ref: ${{ github.head_ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Install Graphviz
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends graphviz
+
+      - name: Download PlantUML
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/plantuml.jar" \
+            "https://github.com/plantuml/plantuml/releases/download/v${PLANTUML_VERSION}/plantuml-${PLANTUML_VERSION}.jar"
+          echo "${PLANTUML_SHA256}  $RUNNER_TEMP/plantuml.jar" | sha256sum --check
+
+      - name: Render diagrams to SVG
+        run: java -jar "$RUNNER_TEMP/plantuml.jar" -tsvg -failfast2 docs/diagrams/*.puml
+
+      - name: Check for changed SVGs
+        id: diff
+        run: |
+          git add docs/diagrams/*.svg
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            git diff --cached --stat
+          fi
+
+      - name: Commit rendered SVGs
+        if: >-
+          steps.diff.outputs.changed == 'true' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Render PlantUML diagrams to SVG"
+          git push
+
+      - name: Fail on outdated SVGs from a fork
+        if: >-
+          steps.diff.outputs.changed == 'true' &&
+          github.event.pull_request.head.repo.full_name != github.repository
+        run: |
+          echo "::error::The SVGs in docs/diagrams/ are out of date. Render them locally, see docs/diagrams/README.md."
+          exit 1

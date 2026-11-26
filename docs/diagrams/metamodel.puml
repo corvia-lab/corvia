@@ -1,4 +1,4 @@
-@startuml corvia-metamodel
+@startuml metamodel
 ' The corvia meta-model of stage 1 (design D1-D5). Written by hand.
 ' Concrete models (generated): smart-home.puml, enterprise.puml, business-letter.puml
 hide empty members
