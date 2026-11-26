@@ -30,6 +30,8 @@ corvia is a research, exploration and experimentation project. One of its questi
 |---|---|
 | `README.md` | Vision, project character, naming, license |
 | `docs/drafts/` | Drafts and starting points for discussion. Each file starts with a status line. |
+| `docs/architecture/` | Architecture documentation: requirements, structure and concepts. Each file starts with a status line. |
+| `docs/architecture/decisions/` | Architecture decision records (ADRs), numbered `NNNN-<topic>.md`. Each starts with a status line (Proposed, Accepted, Superseded). |
 | `docs/journal/` | A rough record of how we work and what we learn, especially about collaboration between humans and AI. One file per session or milestone, named `YYYY-MM-DD-<topic>.md`. |
 
 - **Document as you go.** Summarize results, decisions and their reasons while you work, not afterwards.

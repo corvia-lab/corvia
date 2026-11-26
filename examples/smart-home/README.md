@@ -1,8 +1,8 @@
 # Example: smart home
 
-> **Status:** Draft, stage 1 example model. All data is invented.
+> **Status:** Draft, Iteration 1 example model. All data is invented.
 
-An invented private setup with two locations, built to test the generic meta-model (see the [design](../../openspec/changes/stage-1-metamodel-exploration/design.md)).
+An invented private setup with two locations, built to test the generic meta-model (see the [design](https://github.com/corvia-lab/corvia/blob/c445a5fa9c89ff2a2179209fdbec637d63327a36/openspec/changes/stage-1-metamodel-exploration/design.md)).
 
 ## Setup
 

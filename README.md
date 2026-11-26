@@ -38,6 +38,8 @@ The tool itself is an experiment too:
 
 Expect breaking changes, unfinished parts and changes of direction. They are part of the experiment.
 
+We call each research and development cycle an **iteration**. In corvia, a **stage** is one of Development, Test or Production. **Promotion** transfers a version from Development to Test or from Test to Production after explicit approval for that transfer. Documents written before 2026-11-26 (journal entries, findings) still call iterations "stages"; they are kept as written.
+
 ---
 
 ## AI-assisted by design

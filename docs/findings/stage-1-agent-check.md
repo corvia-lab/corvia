@@ -1,6 +1,6 @@
 # Stage 1: agent entry point check
 
-> **Status:** Draft, result of Task 9 of the [stage 1 change](../../openspec/changes/stage-1-metamodel-exploration/tasks.md)
+> **Status:** Draft, result of Task 9 of the [stage 1 change](https://github.com/corvia-lab/corvia/blob/c445a5fa9c89ff2a2179209fdbec637d63327a36/openspec/changes/stage-1-metamodel-exploration/tasks.md)
 > **Date:** 2026-11-22
 > **Method:** A fresh AI agent (Claude, subagent without prior context) was allowed to read only `spec/metamodel/README.md` and `examples/smart-home/{model,items,presentation}.yaml`. It was not allowed to read the example README, the tests or the tools. It got the five questions without the expected answers.
 

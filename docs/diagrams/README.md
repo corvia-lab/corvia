@@ -1,6 +1,6 @@
 # Diagrams
 
-> **Status:** Draft, stage 1
+> **Status:** Draft, Iteration 1
 
 PlantUML class diagrams of the meta-model and the example models.
 

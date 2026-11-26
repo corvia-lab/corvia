@@ -1,7 +1,7 @@
 # Stage 1 findings: generic meta-model
 
 > **Status:** Final, findings of stage 1, decision taken on 2026-11-23
-> **Change:** [`stage-1-metamodel-exploration`](../../openspec/changes/stage-1-metamodel-exploration/design.md)
+> **Change:** [`stage-1-metamodel-exploration`](https://github.com/corvia-lab/corvia/blob/c445a5fa9c89ff2a2179209fdbec637d63327a36/openspec/changes/stage-1-metamodel-exploration/design.md)
 > **Written by:** Claude (AI agent) during implementation. Labels: **fact** (observed), **assumption**, **opinion**.
 
 ## Hypothesis and result

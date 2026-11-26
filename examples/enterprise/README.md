@@ -1,6 +1,6 @@
 # Example: enterprise control model
 
-> **Status:** Draft, stage 1 control case. All data is invented.
+> **Status:** Draft, Iteration 1 control case. All data is invented.
 
 A deliberately small model of the chain **business process → application → server → datacenter**. It exists to check that the meta-model is not tuned to the smart home only, and that the same prototype can show it without type-specific code.
 

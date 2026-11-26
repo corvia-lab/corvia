@@ -1,4 +1,4 @@
-// Model navigation for the stage 1 prototypes. Generic: no type names in here.
+// Model navigation for the Iteration 1 prototypes. Generic: no type names in here.
 
 export function indexBundle(bundle) {
   const byId = new Map();

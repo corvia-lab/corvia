@@ -1,6 +1,6 @@
-# corvia meta-model (stage 1)
+# corvia meta-model (Iteration 1)
 
-> **Status:** Draft, stage 1 exploration. Defined in the OpenSpec change [`stage-1-metamodel-exploration`](../../openspec/changes/stage-1-metamodel-exploration/design.md).
+> **Status:** Draft, Iteration 1 exploration. Defined in the OpenSpec change [meta-model exploration design](https://github.com/corvia-lab/corvia/blob/c445a5fa9c89ff2a2179209fdbec637d63327a36/openspec/changes/stage-1-metamodel-exploration/design.md).
 
 A model folder holds three YAML files. The JSON Schemas in this folder check their structure (level 1). `tools/validate.py` also checks that items conform to the types of their model (level 2).
 
