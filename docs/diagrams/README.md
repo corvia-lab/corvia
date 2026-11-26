@@ -13,6 +13,26 @@ PlantUML class diagrams of the meta-model and the example models.
 
 The model diagrams are generated from `examples/*/model.yaml` with `python tools/build_diagrams.py`. A test fails if they are out of date.
 
+Each `.puml` file has an `.svg` file next to it. The [Diagrams workflow](../../.github/workflows/diagrams.yml) renders them on every pull request that changes a `.puml` file and commits changed SVGs to the pull request branch. Do not edit the SVGs by hand. On a pull request from a fork, render them locally with PlantUML (see below) and commit them yourself.
+
+## The diagrams
+
+### Meta-model
+
+![corvia meta-model](metamodel.svg)
+
+### Example model: smart home
+
+![Example model smart home](smart-home.svg)
+
+### Example model: enterprise
+
+![Example model enterprise](enterprise.svg)
+
+### Example model: business letters
+
+![Example model business letters](business-letter.svg)
+
 ## How to read the model diagrams
 
 - Item types are classes with their attributes. `[1]` means required.
@@ -21,18 +41,18 @@ The model diagrams are generated from `examples/*/model.yaml` with `python tools
 
 ## How to view them
 
-GitHub does not render PlantUML in the file view. Options:
+GitHub does not render PlantUML in the file view, which is why the SVGs above exist. To view or edit the `.puml` sources:
 
 - Paste the file content into the online editor at plantuml.com.
 - Use a PlantUML extension in VS Code (also in a Codespace) or in a JetBrains IDE.
 - Use the official PlantUML browser extension for Chrome or Firefox, which renders PlantUML inside GitHub pages ([plantuml.com/news](https://plantuml.com/news)).
-- Run PlantUML locally (needs Java): `java -jar plantuml.jar docs/diagrams/*.puml`.
+- Run PlantUML locally (needs Java and Graphviz): `java -jar plantuml.jar -tsvg docs/diagrams/*.puml`. Use the version set in the workflow, so the output matches.
 
 ## Decision: keep PlantUML, render SVGs in CI
 
 > **Decided** by quasipapa on 2026-11-26. Analysis by Claude (AI agent). Labels: **fact** (verified), **assumption**, **opinion**.
 
-**Decision:** the diagrams stay in PlantUML. A GitHub Actions workflow will render them to SVG, and this README will embed the SVGs, so readers can see the diagrams on GitHub without any tools. Status: the workflow is planned, not built yet.
+**Decision:** the diagrams stay in PlantUML. A GitHub Actions workflow renders them to SVG, and this README embeds the SVGs, so readers can see the diagrams on GitHub without any tools. The bot commits rendered SVGs to the pull request branch, and they lie next to the `.puml` files (both decided by quasipapa).
 
 **Options considered**
 
