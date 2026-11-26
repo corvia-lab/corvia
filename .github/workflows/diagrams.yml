@@ -3,8 +3,9 @@
 #
 # On a pull request from this repository, changed SVGs are committed back to the
 # pull request branch. On a pull request from a fork, the job only checks and fails
-# if the SVGs are out of date. Pushes made with GITHUB_TOKEN do not start new
-# workflow runs, so this cannot loop.
+# if the SVGs are out of date. The bot commit does not loop: GitHub holds the
+# run it would start as "action required" (observed on 2026-11-26), and if that
+# run is approved, the SVGs are unchanged and nothing is committed.
 
 name: Diagrams
 
