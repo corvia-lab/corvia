@@ -9,7 +9,7 @@
 
 ## 1. What happened
 
-The session ran from about 21:50 to 00:40, with breaks. It took the [stage 1 design](../../openspec/changes/stage-1-metamodel-exploration/design.md) from the previous session through to a decision on stage 2.
+The session ran from about 21:50 to 00:40, with breaks. It took the [stage 1 design](https://github.com/corvia-lab/corvia/blob/c445a5fa9c89ff2a2179209fdbec637d63327a36/openspec/changes/stage-1-metamodel-exploration/design.md) from the previous session through to a decision on stage 2.
 
 | Step | What happened |
 |---|---|

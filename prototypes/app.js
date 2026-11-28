@@ -1,4 +1,4 @@
-// Throwaway stage 1 prototype. Everything specific to a model comes from the bundle:
+// Throwaway Iteration 1 prototype. Everything specific to a model comes from the bundle:
 // no type names may appear in this file (checked in tasks.md, step 8.2).
 import { indexBundle, title, relationsOf, otherPlayers, isEdgeType, drillDown, buildTree, edgeFrom } from "./lib/model.js";
 import { createState, editAttribute, receiveSourceChange, markDeleted, listPending, applySync } from "./lib/deltas.js";

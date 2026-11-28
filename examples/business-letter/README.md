@@ -1,6 +1,6 @@
 # Example: business letters
 
-> **Status:** Draft, stage 1 example model (design D9). All data is invented.
+> **Status:** Draft, Iteration 1 example model (design D9). All data is invented.
 
 Business letters as quasipapa knows them from practice, reduced to a small invented data set. The aim is to test whether the meta-model can express the relationships of this domain. Volumes do not matter here.
 

@@ -1,4 +1,4 @@
-// Pending changes (design D5) for the stage 1 prototypes. State lives in memory only.
+// Pending changes (design D5) for the Iteration 1 prototypes. State lives in memory only.
 
 export function createState(bundle) {
   return { model: bundle.model, items: structuredClone(bundle.items) };

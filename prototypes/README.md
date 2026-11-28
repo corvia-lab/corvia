@@ -1,4 +1,4 @@
-# Stage 1 prototype
+# Iteration 1 prototype
 
 > **Status:** Throwaway. This is an exploration aid, not the start of the product. It decides no technology.
 
